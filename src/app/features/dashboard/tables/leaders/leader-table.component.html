@@ -36,10 +36,10 @@
               <div class="leader-softers">
                 <div class="leader-softers-header">
                   <span class="leader-softers-title">Detalles de Etapas Medidas</span>
-                  <span class="mono">Total: {{ item.byStage.length }}</span>
+                  <span class="mono">Total: {{ measuredStages(item.byStage).length }}</span>
                 </div>
                 <div class="detail-inner">
-                  @for (stage of item.byStage; track stage.etapa) {
+                  @for (stage of measuredStages(item.byStage); track stage.etapa) {
                     <span class="stage-chip">
                       <span class="stage-label">{{ stage.etapa.replace('Etapa de ', '') }} ({{ stage.softerCount }})</span>
                       <span class="stage-val mono" [class]="pct(stage.avg) | colorClass">
@@ -48,7 +48,7 @@
                     </span>
                   }
                 </div>
-                @if (!item.byStage.length) {
+                @if (!measuredStages(item.byStage).length) {
                   <span class="stage-label">Sin etapas con indice</span>
                 }
               </div>

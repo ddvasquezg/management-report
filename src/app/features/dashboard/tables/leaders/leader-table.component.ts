@@ -1,5 +1,5 @@
 import { Component, input, computed, signal } from '@angular/core';
-import { LeaderAggregate } from '../../../../core/models/aggregates.model';
+import { LeaderAggregate, StageAggregate } from '../../../../core/models/aggregates.model';
 import { ColorClassPipe } from '../../../../shared/pipes/color-class.pipe';
 
 @Component({
@@ -33,5 +33,9 @@ export class LeaderTableComponent {
 
   isExpanded(lider: string): boolean {
     return this.expandedRows().has(lider);
+  }
+
+  measuredStages(stages: StageAggregate[]): StageAggregate[] {
+    return stages.filter(stage => stage.avg !== null);
   }
 }
