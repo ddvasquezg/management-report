@@ -71,9 +71,9 @@ export class ReportParserService {
 
   computeAggregates(rows: ReportRow[]): ReportAggregates {
     const byStageMap: Record<string, { sum: number; count: number; softers: Set<string> }> = {};
-    const byLeaderMap: Record<string, { sum: number; count: number; softers: Set<string>; byStage: Record<string, { sum: number; count: number; softers: Set<string> }> }> = {};
+    const byLeaderMap: Record<string, { sum: number; count: number; softers: Set<string>; bySofter: Record<string, { sum: number; count: number }>; byStage: Record<string, { sum: number; count: number; softers: Set<string> }> }> = {};
     const byActivityMap: Record<string, { sum: number; count: number; softers: Set<string> }> = {};
-    const byStageWithActivitiesMap: Record<string, { sum: number; count: number; softers: Set<string>; activities: Record<string, { sum: number; count: number; softers: Set<string> }> }> = {};
+    const byStageWithActivitiesMap: Record<string, { sum: number; count: number; softers: Set<string>; bySofter: Record<string, { sum: number; count: number }>; activities: Record<string, { sum: number; count: number; softers: Set<string> }> }> = {};
     const byObservationMap: Record<string, { softer: string; observation: string; sum: number; count: number }> = {};
 
     rows.forEach(r => {
@@ -96,12 +96,19 @@ export class ReportParserService {
       }
       if (r.etapa) {
         if (!byStageWithActivitiesMap[r.etapa]) {
-          byStageWithActivitiesMap[r.etapa] = { sum: 0, count: 0, softers: new Set<string>(), activities: {} };
+          byStageWithActivitiesMap[r.etapa] = { sum: 0, count: 0, softers: new Set<string>(), bySofter: {}, activities: {} };
         }
         if (idx !== null) {
           byStageWithActivitiesMap[r.etapa].sum += idx;
           byStageWithActivitiesMap[r.etapa].count++;
           if (r.nombre) byStageWithActivitiesMap[r.etapa].softers.add(r.nombre);
+          if (r.nombre) {
+            if (!byStageWithActivitiesMap[r.etapa].bySofter[r.nombre]) {
+              byStageWithActivitiesMap[r.etapa].bySofter[r.nombre] = { sum: 0, count: 0 };
+            }
+            byStageWithActivitiesMap[r.etapa].bySofter[r.nombre].sum += idx;
+            byStageWithActivitiesMap[r.etapa].bySofter[r.nombre].count++;
+          }
         }
         if (r.activity) {
           if (!byStageWithActivitiesMap[r.etapa].activities[r.activity]) {
@@ -116,12 +123,19 @@ export class ReportParserService {
       }
       if (r.lider) {
         if (!byLeaderMap[r.lider]) {
-          byLeaderMap[r.lider] = { sum: 0, count: 0, softers: new Set<string>(), byStage: {} };
+          byLeaderMap[r.lider] = { sum: 0, count: 0, softers: new Set<string>(), bySofter: {}, byStage: {} };
         }
         if (idx !== null) {
           byLeaderMap[r.lider].sum += idx;
           byLeaderMap[r.lider].count++;
           if (r.nombre) byLeaderMap[r.lider].softers.add(r.nombre);
+          if (r.nombre) {
+            if (!byLeaderMap[r.lider].bySofter[r.nombre]) {
+              byLeaderMap[r.lider].bySofter[r.nombre] = { sum: 0, count: 0 };
+            }
+            byLeaderMap[r.lider].bySofter[r.nombre].sum += idx;
+            byLeaderMap[r.lider].bySofter[r.nombre].count++;
+          }
         }
         if (r.etapa) {
           if (!byLeaderMap[r.lider].byStage[r.etapa])
@@ -160,6 +174,12 @@ export class ReportParserService {
       lider: k,
       avg: avg(byLeaderMap[k]),
       softerCount: byLeaderMap[k].softers.size,
+      softers: Object.keys(byLeaderMap[k].bySofter)
+        .map(name => ({
+          name,
+          total: byLeaderMap[k].bySofter[name].count,
+        }))
+        .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name)),
       byStage: this.sortByAvgDesc(Object.keys(byLeaderMap[k].byStage).map(s => ({
         etapa: s,
         avg: avg(byLeaderMap[k].byStage[s]),
@@ -178,6 +198,12 @@ export class ReportParserService {
         etapa: stage,
         avg: avg(byStageWithActivitiesMap[stage]),
         softerCount: byStageWithActivitiesMap[stage].softers.size,
+        softers: Object.keys(byStageWithActivitiesMap[stage].bySofter)
+          .map(name => ({
+            name,
+            total: byStageWithActivitiesMap[stage].bySofter[name].count,
+          }))
+          .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name)),
         activities: this.sortByAvgDesc(
           Object.keys(byStageWithActivitiesMap[stage].activities).map(activity => ({
             activity,

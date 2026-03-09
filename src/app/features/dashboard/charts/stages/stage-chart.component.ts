@@ -1,44 +1,42 @@
 import {
   Component, input, OnChanges, SimpleChanges,
   ElementRef, ViewChild, AfterViewInit, OnDestroy,
-  inject, effect, computed
+  inject, effect
 } from '@angular/core';
 import { Chart, BarController, CategoryScale, LinearScale, BarElement, Tooltip } from 'chart.js';
-import { ActivityAggregate } from '../../../core/models/aggregates.model';
-import { ThemeService } from '../../../core/services/theme.service';
+import { StageAggregate } from '../../../../core/models/aggregates.model';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 Chart.register(BarController, CategoryScale, LinearScale, BarElement, Tooltip);
 
 @Component({
-  selector: 'app-activity-chart',
+  selector: 'app-stage-chart',
   standalone: true,
   template: `
     <div class="panel">
       <div class="panel-header">
-        <h3>Indice por Actividad</h3>
+        <h3>Índice por Etapa</h3>
         <span class="summary-tag">{{ summaryText() }}</span>
       </div>
-      <div class="chart-wrap" [style.height.px]="chartHeight()">
+      <div class="chart-wrap">
         <canvas #chartCanvas></canvas>
       </div>
     </div>
   `,
-  styleUrl: './chart-panel.scss',
+  styleUrl: '../shared/chart-panel.scss',
 })
-export class ActivityChartComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class StageChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('chartCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  data = input<ActivityAggregate[]>([]);
+  data = input<StageAggregate[]>([]);
   summaryText = input<string>('');
-
-  chartHeight = computed(() => Math.max(220, this.data().length * 34));
 
   private chart?: Chart;
   private theme = inject(ThemeService);
 
   constructor() {
     effect(() => {
-      this.theme.isDark();
+      this.theme.isDark(); // react to theme changes
       if (this.canvasRef) this.buildChart();
     });
   }
@@ -60,13 +58,12 @@ export class ActivityChartComponent implements AfterViewInit, OnChanges, OnDestr
   private buildChart(): void {
     if (!this.canvasRef) return;
     const items = this.data();
-    const labels = items.map(a => a.activity);
-    const values = items.map(a => a.avg !== null ? a.avg * 100 : 0);
-    const colors = items.map(a => this.chartColor(a.avg !== null ? a.avg * 100 : null));
+    const labels  = items.map(s => s.etapa.replace('Etapa de ', ''));
+    const values  = items.map(s => s.avg !== null ? s.avg * 100 : 0);
+    const colors  = items.map(s => this.chartColor(s.avg !== null ? s.avg * 100 : null));
     const dark = this.theme.isDark();
     const gridColor = dark ? 'rgba(122,155,181,0.07)' : 'rgba(30,80,180,0.07)';
     const tickColor = dark ? '#7a9bb5' : '#4a6a90';
-    const bounds = this.computeBounds(values);
 
     this.chart?.destroy();
     this.chart = new Chart(this.canvasRef.nativeElement, {
@@ -74,19 +71,17 @@ export class ActivityChartComponent implements AfterViewInit, OnChanges, OnDestr
       data: {
         labels,
         datasets: [{
-          label: 'Indice %', data: values,
+          label: 'Índice %', data: values,
           backgroundColor: colors, borderRadius: 5, borderSkipped: false,
         }],
       },
       options: {
-        indexAxis: 'y',
         maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: ctx => ` ${(ctx.parsed.x as number).toFixed(1)}%`,
-              title: items => items.length ? labels[items[0].dataIndex] : '',
+              label: ctx => ` ${(ctx.parsed.y as number).toFixed(1)}%`,
               afterLabel: ctx => {
                 const count = items[ctx.dataIndex]?.softerCount ?? 0;
                 return `Softers considerados: ${count}`;
@@ -95,29 +90,15 @@ export class ActivityChartComponent implements AfterViewInit, OnChanges, OnDestr
           },
         },
         scales: {
-          x: {
-            min: bounds.min,
-            max: bounds.max,
+          x: { grid: { color: gridColor }, ticks: { color: tickColor } },
+          y: {
+            beginAtZero: true, max: 100,
             grid: { color: gridColor },
             ticks: { color: tickColor, callback: v => v + '%' },
-          },
-          y: {
-            grid: { color: gridColor },
-            ticks: { color: tickColor },
           },
         },
       },
     });
-  }
-
-  private computeBounds(values: number[]): { min: number; max: number } {
-    if (!values.length) return { min: 0, max: 100 };
-    const rawMin = Math.min(0, ...values);
-    const rawMax = Math.max(0, ...values);
-    const min = Math.floor(rawMin / 10) * 10;
-    let max = Math.ceil(rawMax / 10) * 10;
-    if (min === max) max = min + 10;
-    return { min, max };
   }
 
   private chartColor(pct: number | null): string {

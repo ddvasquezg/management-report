@@ -1,5 +1,5 @@
 import { Component, computed, input } from '@angular/core';
-import { ProcessImprovementRow } from '../../../core/models/report-row.model';
+import { ProcessImprovementRow } from '../../../../core/models/report-row.model';
 
 interface ImprovementItemView {
   item: string;

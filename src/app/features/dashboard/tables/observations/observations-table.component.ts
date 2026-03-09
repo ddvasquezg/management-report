@@ -1,11 +1,11 @@
 import { Component, computed, input } from '@angular/core';
-import { ObservationAggregate } from '../../../core/models/aggregates.model';
+import { ObservationAggregate } from '../../../../core/models/aggregates.model';
 
 @Component({
   selector: 'app-observations-table',
   standalone: true,
   templateUrl: './observations-table.component.html',
-  styleUrl: './data-table.scss',
+  styleUrl: '../shared/data-table.scss',
 })
 export class ObservationsTableComponent {
   data = input<ObservationAggregate[]>([]);

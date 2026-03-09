@@ -1,10 +1,10 @@
 import { Component, inject } from '@angular/core';
-import { CollaboratorsComponent } from './collaborators.component';
-import { StageTableComponent } from './stage-table.component';
-import { LeaderTableComponent } from './leader-table.component';
-import { StageActivityTableComponent } from './stage-activity-table.component';
-import { ProcessImprovementsComponent } from './process-improvements.component';
-import { ReportStoreService } from '../../../core/services/report-store.service';
+import { CollaboratorsComponent } from '../collaborators/collaborators.component';
+import { StageTableComponent } from '../stages/stage-table.component';
+import { LeaderTableComponent } from '../leaders/leader-table.component';
+import { StageActivityTableComponent } from '../stages/stage-activity-table.component';
+import { ProcessImprovementsComponent } from '../process-improvements/process-improvements.component';
+import { ReportStoreService } from '../../../../core/services/report-store.service';
 
 @Component({
   selector: 'app-tables',

@@ -1,35 +1,37 @@
 import {
   Component, input, OnChanges, SimpleChanges,
   ElementRef, ViewChild, AfterViewInit, OnDestroy,
-  inject, effect
+  inject, effect, computed
 } from '@angular/core';
 import { Chart, BarController, CategoryScale, LinearScale, BarElement, Tooltip } from 'chart.js';
-import { StageAggregate } from '../../../core/models/aggregates.model';
-import { ThemeService } from '../../../core/services/theme.service';
+import { LeaderAggregate } from '../../../../core/models/aggregates.model';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 Chart.register(BarController, CategoryScale, LinearScale, BarElement, Tooltip);
 
 @Component({
-  selector: 'app-stage-chart',
+  selector: 'app-leader-chart',
   standalone: true,
   template: `
     <div class="panel">
       <div class="panel-header">
-        <h3>Índice por Etapa</h3>
+        <h3>Índice por Líder</h3>
         <span class="summary-tag">{{ summaryText() }}</span>
       </div>
-      <div class="chart-wrap">
+      <div class="chart-wrap" [style.height.px]="chartHeight()">
         <canvas #chartCanvas></canvas>
       </div>
     </div>
   `,
-  styleUrl: './chart-panel.scss',
+  styleUrl: '../shared/chart-panel.scss',
 })
-export class StageChartComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class LeaderChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('chartCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  data = input<StageAggregate[]>([]);
+  data = input<LeaderAggregate[]>([]);
   summaryText = input<string>('');
+
+  chartHeight = computed(() => Math.max(230, this.data().length * 44));
 
   private chart?: Chart;
   private theme = inject(ThemeService);
@@ -58,12 +60,13 @@ export class StageChartComponent implements AfterViewInit, OnChanges, OnDestroy 
   private buildChart(): void {
     if (!this.canvasRef) return;
     const items = this.data();
-    const labels  = items.map(s => s.etapa.replace('Etapa de ', ''));
-    const values  = items.map(s => s.avg !== null ? s.avg * 100 : 0);
-    const colors  = items.map(s => this.chartColor(s.avg !== null ? s.avg * 100 : null));
+    const labels = items.map(l => l.lider);
+    const values = items.map(l => l.avg !== null ? l.avg * 100 : 0);
+    const colors = items.map(l => this.chartColor(l.avg !== null ? l.avg * 100 : null));
     const dark = this.theme.isDark();
     const gridColor = dark ? 'rgba(122,155,181,0.07)' : 'rgba(30,80,180,0.07)';
     const tickColor = dark ? '#7a9bb5' : '#4a6a90';
+    const bounds = this.computeBounds(values);
 
     this.chart?.destroy();
     this.chart = new Chart(this.canvasRef.nativeElement, {
@@ -76,12 +79,13 @@ export class StageChartComponent implements AfterViewInit, OnChanges, OnDestroy 
         }],
       },
       options: {
+        indexAxis: 'y',
         maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
           tooltip: {
             callbacks: {
-              label: ctx => ` ${(ctx.parsed.y as number).toFixed(1)}%`,
+              label: ctx => ` ${(ctx.parsed.x as number).toFixed(1)}%`,
               afterLabel: ctx => {
                 const count = items[ctx.dataIndex]?.softerCount ?? 0;
                 return `Softers considerados: ${count}`;
@@ -90,15 +94,26 @@ export class StageChartComponent implements AfterViewInit, OnChanges, OnDestroy 
           },
         },
         scales: {
-          x: { grid: { color: gridColor }, ticks: { color: tickColor } },
-          y: {
-            beginAtZero: true, max: 100,
+          x: {
+            min: bounds.min,
+            max: bounds.max,
             grid: { color: gridColor },
             ticks: { color: tickColor, callback: v => v + '%' },
           },
+          y: { grid: { color: gridColor }, ticks: { color: tickColor } },
         },
       },
     });
+  }
+
+  private computeBounds(values: number[]): { min: number; max: number } {
+    if (!values.length) return { min: 0, max: 100 };
+    const rawMin = Math.min(0, ...values);
+    const rawMax = Math.max(0, ...values);
+    const min = Math.floor(rawMin / 10) * 10;
+    let max = Math.ceil(rawMax / 10) * 10;
+    if (min === max) max = min + 10;
+    return { min, max };
   }
 
   private chartColor(pct: number | null): string {

@@ -1,7 +1,7 @@
 import { Component, input, inject, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ReportRow } from '../../../core/models/report-row.model';
-import { ReportStoreService } from '../../../core/services/report-store.service';
+import { ReportRow } from '../../../../core/models/report-row.model';
+import { ReportStoreService } from '../../../../core/services/report-store.service';
 
 @Component({
   selector: 'app-collaborators',

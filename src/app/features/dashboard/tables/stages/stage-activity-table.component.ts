@@ -1,13 +1,13 @@
 import { Component, computed, input, signal } from '@angular/core';
-import { StageWithActivitiesAggregate } from '../../../core/models/aggregates.model';
-import { ColorClassPipe } from '../../../shared/pipes/color-class.pipe';
+import { StageWithActivitiesAggregate } from '../../../../core/models/aggregates.model';
+import { ColorClassPipe } from '../../../../shared/pipes/color-class.pipe';
 
 @Component({
   selector: 'app-stage-activity-table',
   standalone: true,
   imports: [ColorClassPipe],
   templateUrl: './stage-activity-table.component.html',
-  styleUrl: './data-table.scss',
+  styleUrl: '../shared/data-table.scss',
 })
 export class StageActivityTableComponent {
   data = input<StageWithActivitiesAggregate[]>([]);

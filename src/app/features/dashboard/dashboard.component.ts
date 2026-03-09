@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { KpisComponent } from './kpis/kpis.component';
-import { ChartsComponent } from './charts/charts.component';
-import { TablesComponent } from './tables/tables.component';
+import { ChartsComponent } from './charts/composition/charts.component';
+import { TablesComponent } from './tables/composition/tables.component';
 import { ReportStoreService } from '../../core/services/report-store.service';
 
 @Component({

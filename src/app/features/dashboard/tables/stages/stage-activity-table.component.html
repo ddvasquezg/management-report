@@ -46,6 +46,24 @@
                   <span class="stage-label">Sin actividades con indice</span>
                 }
               </div>
+              <div class="leader-softers">
+                <div class="leader-softers-header">
+                  <span class="leader-softers-title">Detalles de Softers Medidos</span>
+                  <span class="mono">Total: {{ item.softerCount }}</span>
+                </div>
+                @if (item.softers.length) {
+                  <div class="leader-softers-list">
+                    @for (softer of item.softers; track softer.name) {
+                      <span class="softer-chip">
+                        <span class="softer-name">{{ softer.name }}</span>
+                        <span class="mono softer-total">{{ softer.total }}</span>
+                      </span>
+                    }
+                  </div>
+                } @else {
+                  <span class="stage-label">Sin softers con indice</span>
+                }
+              </div>
             </td>
           </tr>
         }

@@ -14,6 +14,10 @@ export interface StageWithActivitiesAggregate {
   etapa: string;
   avg: number | null;
   softerCount: number;
+  softers: {
+    name: string;
+    total: number;
+  }[];
   activities: ActivityAggregate[];
 }
 
@@ -29,6 +33,10 @@ export interface LeaderAggregate {
   avg: number | null;
   softerCount: number;
   byStage: StageAggregate[];
+  softers: {
+    name: string;
+    total: number;
+  }[];
 }
 
 export interface ReportAggregates {

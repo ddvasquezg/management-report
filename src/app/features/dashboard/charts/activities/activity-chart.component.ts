@@ -4,18 +4,18 @@ import {
   inject, effect, computed
 } from '@angular/core';
 import { Chart, BarController, CategoryScale, LinearScale, BarElement, Tooltip } from 'chart.js';
-import { LeaderAggregate } from '../../../core/models/aggregates.model';
-import { ThemeService } from '../../../core/services/theme.service';
+import { ActivityAggregate } from '../../../../core/models/aggregates.model';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 Chart.register(BarController, CategoryScale, LinearScale, BarElement, Tooltip);
 
 @Component({
-  selector: 'app-leader-chart',
+  selector: 'app-activity-chart',
   standalone: true,
   template: `
     <div class="panel">
       <div class="panel-header">
-        <h3>Índice por Líder</h3>
+        <h3>Indice por Actividad</h3>
         <span class="summary-tag">{{ summaryText() }}</span>
       </div>
       <div class="chart-wrap" [style.height.px]="chartHeight()">
@@ -23,22 +23,22 @@ Chart.register(BarController, CategoryScale, LinearScale, BarElement, Tooltip);
       </div>
     </div>
   `,
-  styleUrl: './chart-panel.scss',
+  styleUrl: '../shared/chart-panel.scss',
 })
-export class LeaderChartComponent implements AfterViewInit, OnChanges, OnDestroy {
+export class ActivityChartComponent implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('chartCanvas') canvasRef!: ElementRef<HTMLCanvasElement>;
 
-  data = input<LeaderAggregate[]>([]);
+  data = input<ActivityAggregate[]>([]);
   summaryText = input<string>('');
 
-  chartHeight = computed(() => Math.max(230, this.data().length * 44));
+  chartHeight = computed(() => Math.max(220, this.data().length * 34));
 
   private chart?: Chart;
   private theme = inject(ThemeService);
 
   constructor() {
     effect(() => {
-      this.theme.isDark(); // react to theme changes
+      this.theme.isDark();
       if (this.canvasRef) this.buildChart();
     });
   }
@@ -60,9 +60,9 @@ export class LeaderChartComponent implements AfterViewInit, OnChanges, OnDestroy
   private buildChart(): void {
     if (!this.canvasRef) return;
     const items = this.data();
-    const labels = items.map(l => l.lider);
-    const values = items.map(l => l.avg !== null ? l.avg * 100 : 0);
-    const colors = items.map(l => this.chartColor(l.avg !== null ? l.avg * 100 : null));
+    const labels = items.map(a => a.activity);
+    const values = items.map(a => a.avg !== null ? a.avg * 100 : 0);
+    const colors = items.map(a => this.chartColor(a.avg !== null ? a.avg * 100 : null));
     const dark = this.theme.isDark();
     const gridColor = dark ? 'rgba(122,155,181,0.07)' : 'rgba(30,80,180,0.07)';
     const tickColor = dark ? '#7a9bb5' : '#4a6a90';
@@ -74,7 +74,7 @@ export class LeaderChartComponent implements AfterViewInit, OnChanges, OnDestroy
       data: {
         labels,
         datasets: [{
-          label: 'Índice %', data: values,
+          label: 'Indice %', data: values,
           backgroundColor: colors, borderRadius: 5, borderSkipped: false,
         }],
       },
@@ -86,6 +86,7 @@ export class LeaderChartComponent implements AfterViewInit, OnChanges, OnDestroy
           tooltip: {
             callbacks: {
               label: ctx => ` ${(ctx.parsed.x as number).toFixed(1)}%`,
+              title: items => items.length ? labels[items[0].dataIndex] : '',
               afterLabel: ctx => {
                 const count = items[ctx.dataIndex]?.softerCount ?? 0;
                 return `Softers considerados: ${count}`;
@@ -100,7 +101,10 @@ export class LeaderChartComponent implements AfterViewInit, OnChanges, OnDestroy
             grid: { color: gridColor },
             ticks: { color: tickColor, callback: v => v + '%' },
           },
-          y: { grid: { color: gridColor }, ticks: { color: tickColor } },
+          y: {
+            grid: { color: gridColor },
+            ticks: { color: tickColor },
+          },
         },
       },
     });

@@ -1,8 +1,8 @@
 import { Component, inject, computed } from '@angular/core';
-import { StageChartComponent } from './stage-chart.component';
-import { LeaderChartComponent } from './leader-chart.component';
-import { ActivityChartComponent } from './activity-chart.component';
-import { ReportStoreService } from '../../../core/services/report-store.service';
+import { StageChartComponent } from '../stages/stage-chart.component';
+import { LeaderChartComponent } from '../leaders/leader-chart.component';
+import { ActivityChartComponent } from '../activities/activity-chart.component';
+import { ReportStoreService } from '../../../../core/services/report-store.service';
 
 @Component({
   selector: 'app-charts',

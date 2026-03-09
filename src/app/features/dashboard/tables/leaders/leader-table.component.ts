@@ -1,13 +1,13 @@
 import { Component, input, computed, signal } from '@angular/core';
-import { LeaderAggregate } from '../../../core/models/aggregates.model';
-import { ColorClassPipe } from '../../../shared/pipes/color-class.pipe';
+import { LeaderAggregate } from '../../../../core/models/aggregates.model';
+import { ColorClassPipe } from '../../../../shared/pipes/color-class.pipe';
 
 @Component({
   selector: 'app-leader-table',
   standalone: true,
   imports: [ColorClassPipe],
   templateUrl: './leader-table.component.html',
-  styleUrl: './data-table.scss',
+  styleUrl: '../shared/data-table.scss',
 })
 export class LeaderTableComponent {
   data = input<LeaderAggregate[]>([]);
