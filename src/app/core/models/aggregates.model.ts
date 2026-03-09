@@ -17,6 +17,13 @@ export interface StageWithActivitiesAggregate {
   activities: ActivityAggregate[];
 }
 
+export interface ObservationAggregate {
+  softer: string;
+  observation: string;
+  avg: number | null;
+  records: number;
+}
+
 export interface LeaderAggregate {
   lider: string;
   avg: number | null;
@@ -29,6 +36,7 @@ export interface ReportAggregates {
   byLeader: LeaderAggregate[];
   byActivity: ActivityAggregate[];
   byStageWithActivities: StageWithActivitiesAggregate[];
+  byObservation: ObservationAggregate[];
 }
 
 export interface KpiData {

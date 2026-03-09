@@ -1,0 +1,12 @@
+item a mejorar,Descripción breve,Tipo de problema,Impacto,Responsable
+Requerimientos muy generales o incompletos,La información inicial no llega clara o detallada,Requerimientos,Alta,Cliente
+Dependencia de aprobaciones y validaciones externas,Aprobaciones lentas o no disponibles retrasan el avance,Dependencias,Alta,Cliente
+Descripciones técnicas insuficientes,Falta de detalles técnicos para ejecutar correctamente,Requerimientos,Media,Cliente
+Reprocesos por cambios tardíos,Cambios en imágenes alcance o insumos ya avanzado el desarrollo,Reprocesos,Alta,Cliente
+Retrasos en despliegues y ventanas limitadas,Ventanas de despliegue reducidas generan acumulación de tareas,Ambientes / Gestión,Media,Cliente
+Bloqueos por disponibilidad de otros equipos,Dependencias de seguridad pruebas o soporte externo,Dependencias,Alta,Cliente
+Inestabilidad de ambientes de desarrollo/pruebas,Caídas falta de datos o errores en los ambientes,Ambientes,Alta,Cliente
+Tareas fuera del sprint,Se asignan actividades no planificadas dentro del mismo ciclo,Gestión,Media,Ambos
+Dependencias del backend,El frontend se detiene cuando backend requiere ajustes,Dependencias,Alta,Equipo
+Reuniones o actividades no planificadas,Reuniones o alineaciones urgentes que consumen tiempo del desarrollo,Gestión,Baja / Media,Ambos
+Insumos incompletos para la IA,La IA no optimiza porque los insumos no están completos,Requerimientos,Media,Cliente

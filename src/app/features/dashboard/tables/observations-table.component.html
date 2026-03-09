@@ -1,0 +1,35 @@
+<div class="panel">
+  <div class="panel-header">
+    <h3>Observaciones por Softer (sin repetir)</h3>
+    <span class="summary-tag">{{ rowsWithData().length }} items</span>
+  </div>
+
+  @if (rowsWithData().length) {
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Softer</th>
+          <th>Observacion</th>
+          <th>Estado</th>
+          <th>Indice Prom.</th>
+          <th>Registros</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of rowsWithData(); track item.softer + '|' + item.observation) {
+          <tr>
+            <td>{{ item.softer }}</td>
+            <td>{{ item.observation }}</td>
+            <td class="mono" [class]="statusClass(item.avg)">{{ status(item.avg) }}</td>
+            <td class="mono" [class]="statusClass(item.avg)">
+              {{ pct(item.avg) === null ? '—' : (pct(item.avg)!.toFixed(1) + '%') }}
+            </td>
+            <td class="mono">{{ item.records }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  } @else {
+    <p class="no-results">No hay observaciones con indice para el filtro actual.</p>
+  }
+</div>

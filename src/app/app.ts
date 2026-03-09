@@ -36,8 +36,12 @@ export class App {
   async onFileSelected(file: File): Promise<void> {
     this.store.setLoading(true);
     try {
-      const rows = await this.fileParser.parseFile(file);
+      const [rows, improvements] = await Promise.all([
+        this.fileParser.parseFile(file),
+        this.fileParser.parseImprovementsFromFile(file),
+      ]);
       this.store.setRawRows(rows);
+      this.store.setProcessImprovements(improvements);
     } catch (e) {
       this.store.setError('Error al leer el archivo.');
       console.error(e);
@@ -53,8 +57,12 @@ export class App {
   private async loadFromSample(): Promise<void> {
     this.store.setLoading(true);
     try {
-      const rows = await this.fileParser.parseUrl(this.SAMPLE_URL);
+      const [rows, improvements] = await Promise.all([
+        this.fileParser.parseUrl(this.SAMPLE_URL),
+        this.fileParser.parseImprovementsFromUrl(this.SAMPLE_URL),
+      ]);
       this.store.setRawRows(rows);
+      this.store.setProcessImprovements(improvements);
     } catch (e) {
       this.store.setError('No se pudo cargar el archivo de ejemplo.');
       console.error(e);

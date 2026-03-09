@@ -1,0 +1,20 @@
+<div class="panel">
+  <div class="panel-header">
+    <h3>Items a tener en cuenta para mejorar el proceso</h3>
+    <span class="summary-tag">{{ items().length }} items</span>
+  </div>
+
+  @if (items().length) {
+    <div class="improvements-list">
+      @for (row of items(); track row.item) {
+        <article class="improvement-item" [class]="itemClass(row.impact)">
+          <span class="marker" aria-hidden="true">!</span>
+          <p class="title">{{ row.item }}</p>
+          <span class="impact-chip">{{ impactLabel(row.impact) }}</span>
+        </article>
+      }
+    </div>
+  } @else {
+    <p class="empty-state">No hay items en la hoja Mejoras_Proceso para el filtro actual.</p>
+  }
+</div>

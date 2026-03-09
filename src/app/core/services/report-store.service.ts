@@ -2,12 +2,13 @@ import { Injectable, signal, computed } from '@angular/core';
 import { ReportRow } from '../models/report-row.model';
 import { ReportAggregates, KpiData } from '../models/aggregates.model';
 import { ReportParserService } from './report-parser.service';
-import { RawRow } from '../models/report-row.model';
+import { RawRow, ProcessImprovementRow } from '../models/report-row.model';
 
 @Injectable({ providedIn: 'root' })
 export class ReportStoreService {
 
   private _rawRows    = signal<RawRow[]>([]);
+  private _processImprovements = signal<ProcessImprovementRow[]>([]);
   private _filterIa   = signal<boolean>(false);
   private _selectedSofters = signal<Set<string>>(new Set());
   private _isLoading  = signal<boolean>(false);
@@ -15,6 +16,7 @@ export class ReportStoreService {
   private _hasData    = signal<boolean>(false);
 
   readonly filterIa  = this._filterIa.asReadonly();
+  readonly processImprovements = this._processImprovements.asReadonly();
   readonly selectedSofters = this._selectedSofters.asReadonly();
   readonly isLoading = this._isLoading.asReadonly();
   readonly errorMsg  = this._errorMsg.asReadonly();
@@ -40,6 +42,10 @@ export class ReportStoreService {
   setRawRows(rows: RawRow[]): void {
     this._rawRows.set(rows);
     this._hasData.set(rows.length > 0);
+  }
+
+  setProcessImprovements(rows: ProcessImprovementRow[]): void {
+    this._processImprovements.set(rows);
   }
 
   setFilterIa(value: boolean): void {

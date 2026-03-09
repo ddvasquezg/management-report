@@ -7,6 +7,7 @@ import {
   StageAggregate,
   ActivityAggregate,
   StageWithActivitiesAggregate,
+  ObservationAggregate,
 } from '../models/aggregates.model';
 
 
@@ -59,6 +60,7 @@ export class ReportParserService {
         lider:  (r['Lider En Cliente'] || r['Lider'] || null) as string | null,
         etapa:  (r['Etapa'] || null) as string | null,
         activity: (r['Actividad'] || r['actividad'] || null) as string | null,
+        observation: (r['Observaciones'] || r['observaciones'] || null) as string | null,
         usoIA:  iaRaw.startsWith('s'),
         iaAplica,
         indice: this.computeIndex(r),
@@ -72,6 +74,7 @@ export class ReportParserService {
     const byLeaderMap: Record<string, { sum: number; count: number; softers: Set<string>; byStage: Record<string, { sum: number; count: number; softers: Set<string> }> }> = {};
     const byActivityMap: Record<string, { sum: number; count: number; softers: Set<string> }> = {};
     const byStageWithActivitiesMap: Record<string, { sum: number; count: number; softers: Set<string>; activities: Record<string, { sum: number; count: number; softers: Set<string> }> }> = {};
+    const byObservationMap: Record<string, { softer: string; observation: string; sum: number; count: number }> = {};
 
     rows.forEach(r => {
       const idx = r.indice;
@@ -130,6 +133,18 @@ export class ReportParserService {
           }
         }
       }
+
+      if (r.nombre && r.observation) {
+        const obs = r.observation.trim();
+        if (obs && idx !== null) {
+          const key = `${r.nombre}__${obs.toLowerCase()}`;
+          if (!byObservationMap[key]) {
+            byObservationMap[key] = { softer: r.nombre, observation: obs, sum: 0, count: 0 };
+          }
+          byObservationMap[key].sum += idx;
+          byObservationMap[key].count++;
+        }
+      }
     });
 
     const avg = (o: { sum: number; count: number }): number | null =>
@@ -173,7 +188,16 @@ export class ReportParserService {
       }))
     );
 
-    return { byStage, byLeader, byActivity, byStageWithActivities };
+    const byObservation: ObservationAggregate[] = this.sortByAvgDesc(
+      Object.keys(byObservationMap).map(key => ({
+        softer: byObservationMap[key].softer,
+        observation: byObservationMap[key].observation,
+        avg: avg(byObservationMap[key]),
+        records: byObservationMap[key].count,
+      }))
+    );
+
+    return { byStage, byLeader, byActivity, byStageWithActivities, byObservation };
   }
 
   computeKpis(rows: ReportRow[]): KpiData {

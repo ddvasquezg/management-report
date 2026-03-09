@@ -1,0 +1,77 @@
+.improvements-list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.improvement-item {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--bg-surface);
+  padding: 10px 12px;
+}
+
+.marker {
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #fff;
+  background: #3b82f6;
+}
+
+.title {
+  margin: 0;
+  font-size: 0.84rem;
+  color: var(--text-1);
+}
+
+.impact-chip {
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  color: var(--text-2);
+  background: var(--bg-panel);
+}
+
+.improvement-item.is-high {
+  border-color: rgba(255, 77, 94, 0.45);
+  box-shadow: 0 0 0 1px rgba(255, 77, 94, 0.18) inset;
+}
+
+.improvement-item.is-high .marker {
+  background: #ff4d5e;
+}
+
+.improvement-item.is-medium {
+  border-color: rgba(255, 167, 51, 0.45);
+  box-shadow: 0 0 0 1px rgba(255, 167, 51, 0.2) inset;
+}
+
+.improvement-item.is-medium .marker {
+  background: #f59e0b;
+}
+
+.improvement-item.is-low {
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.15) inset;
+}
+
+.improvement-item.is-low .marker {
+  background: #10b981;
+}
+
+.empty-state {
+  margin: 0;
+  font-size: 0.82rem;
+  color: var(--text-3);
+}

@@ -3,12 +3,19 @@ import { CollaboratorsComponent } from './collaborators.component';
 import { StageTableComponent } from './stage-table.component';
 import { LeaderTableComponent } from './leader-table.component';
 import { StageActivityTableComponent } from './stage-activity-table.component';
+import { ProcessImprovementsComponent } from './process-improvements.component';
 import { ReportStoreService } from '../../../core/services/report-store.service';
 
 @Component({
   selector: 'app-tables',
   standalone: true,
-  imports: [CollaboratorsComponent, StageTableComponent, LeaderTableComponent, StageActivityTableComponent],
+  imports: [
+    CollaboratorsComponent,
+    StageTableComponent,
+    LeaderTableComponent,
+    StageActivityTableComponent,
+    ProcessImprovementsComponent,
+  ],
   template: `
     <section class="tables-row">
       <app-collaborators [rows]="store.rows()" />
@@ -19,6 +26,12 @@ import { ReportStoreService } from '../../../core/services/report-store.service'
         [data]="store.aggregates().byStageWithActivities"
         [globalAvg]="store.kpis().avgIndex"
       />
+      @if (store.processImprovements().length) {
+        <app-process-improvements
+          class="observations-block"
+          [data]="store.processImprovements()"
+        />
+      }
     </section>
   `,
   styles: [`
@@ -31,6 +44,9 @@ import { ReportStoreService } from '../../../core/services/report-store.service'
     .activities-block {
       grid-column: 1 / -1;
     }
+    .observations-block {
+      grid-column: 1 / -1;
+    }
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(10px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -39,6 +55,7 @@ import { ReportStoreService } from '../../../core/services/report-store.service'
       .tables-row { grid-template-columns: 1fr 1fr; row-gap: 36px; }
       app-collaborators { grid-column: 1 / -1; }
       .activities-block { grid-column: 1 / -1; }
+      .observations-block { grid-column: 1 / -1; }
     }
     @media (max-width: 768px) { .tables-row { grid-template-columns: 1fr; row-gap: 36px; } }
   `]
