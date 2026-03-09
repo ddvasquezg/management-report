@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { HeaderComponent } from './layout/header/header.component';
 import { UploadComponent } from './features/upload/upload.component';
 import { DashboardComponent } from './features/dashboard/dashboard.component';
@@ -21,7 +21,7 @@ import { FileParserService } from './core/services/file-parser.service';
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
-export class App implements OnInit {
+export class App {
   private store      = inject(ReportStoreService);
   private exporter   = inject(ExportService);
   private fileParser = inject(FileParserService);
@@ -32,15 +32,6 @@ export class App implements OnInit {
   hasData   = this.store.hasData;
 
   private readonly SAMPLE_URL = 'assets/sample-data/report-sample.csv';
-
-  async ngOnInit(): Promise<void> {
-    try {
-      const rows = await this.fileParser.parseUrl(this.SAMPLE_URL);
-      this.store.setRawRows(rows);
-    } catch (e) {
-      console.warn('Auto-load skipped:', e);
-    }
-  }
 
   async onFileSelected(file: File): Promise<void> {
     this.store.setLoading(true);
