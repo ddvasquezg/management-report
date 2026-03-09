@@ -33,14 +33,23 @@
         @if (isExpanded(item.lider)) {
           <tr class="detail-row">
             <td colspan="4">
-              <div class="detail-inner">
-                @for (stage of item.byStage; track stage.etapa) {
-                  <span class="stage-chip">
-                    <span class="stage-label">{{ stage.etapa.replace('Etapa de ', '') }} ({{ stage.softerCount }})</span>
-                    <span class="stage-val mono" [class]="pct(stage.avg) | colorClass">
-                      {{ pct(stage.avg) === null ? '—' : (pct(stage.avg)!.toFixed(1) + '%') }}
+              <div class="leader-softers">
+                <div class="leader-softers-header">
+                  <span class="leader-softers-title">Detalles de Etapas Medidas</span>
+                  <span class="mono">Total: {{ item.byStage.length }}</span>
+                </div>
+                <div class="detail-inner">
+                  @for (stage of item.byStage; track stage.etapa) {
+                    <span class="stage-chip">
+                      <span class="stage-label">{{ stage.etapa.replace('Etapa de ', '') }} ({{ stage.softerCount }})</span>
+                      <span class="stage-val mono" [class]="pct(stage.avg) | colorClass">
+                        {{ pct(stage.avg) === null ? '—' : (pct(stage.avg)!.toFixed(1) + '%') }}
+                      </span>
                     </span>
-                  </span>
+                  }
+                </div>
+                @if (!item.byStage.length) {
+                  <span class="stage-label">Sin etapas con indice</span>
                 }
               </div>
               <div class="leader-softers">

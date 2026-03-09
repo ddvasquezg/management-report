@@ -6,6 +6,7 @@ import {
   LeaderAggregate,
   StageAggregate,
   ActivityAggregate,
+  ActivityWithSoftersAggregate,
   StageWithActivitiesAggregate,
   ObservationAggregate,
 } from '../models/aggregates.model';
@@ -73,7 +74,18 @@ export class ReportParserService {
     const byStageMap: Record<string, { sum: number; count: number; softers: Set<string> }> = {};
     const byLeaderMap: Record<string, { sum: number; count: number; softers: Set<string>; bySofter: Record<string, { sum: number; count: number }>; byStage: Record<string, { sum: number; count: number; softers: Set<string> }> }> = {};
     const byActivityMap: Record<string, { sum: number; count: number; softers: Set<string> }> = {};
-    const byStageWithActivitiesMap: Record<string, { sum: number; count: number; softers: Set<string>; bySofter: Record<string, { sum: number; count: number }>; activities: Record<string, { sum: number; count: number; softers: Set<string> }> }> = {};
+    const byStageWithActivitiesMap: Record<string, {
+      sum: number;
+      count: number;
+      softers: Set<string>;
+      bySofter: Record<string, { sum: number; count: number }>;
+      activities: Record<string, {
+        sum: number;
+        count: number;
+        softers: Set<string>;
+        bySofter: Record<string, { sum: number; count: number }>;
+      }>;
+    }> = {};
     const byObservationMap: Record<string, { softer: string; observation: string; sum: number; count: number }> = {};
 
     rows.forEach(r => {
@@ -112,12 +124,24 @@ export class ReportParserService {
         }
         if (r.activity) {
           if (!byStageWithActivitiesMap[r.etapa].activities[r.activity]) {
-            byStageWithActivitiesMap[r.etapa].activities[r.activity] = { sum: 0, count: 0, softers: new Set<string>() };
+            byStageWithActivitiesMap[r.etapa].activities[r.activity] = {
+              sum: 0,
+              count: 0,
+              softers: new Set<string>(),
+              bySofter: {},
+            };
           }
           if (idx !== null) {
             byStageWithActivitiesMap[r.etapa].activities[r.activity].sum += idx;
             byStageWithActivitiesMap[r.etapa].activities[r.activity].count++;
-            if (r.nombre) byStageWithActivitiesMap[r.etapa].activities[r.activity].softers.add(r.nombre);
+            if (r.nombre) {
+              byStageWithActivitiesMap[r.etapa].activities[r.activity].softers.add(r.nombre);
+              if (!byStageWithActivitiesMap[r.etapa].activities[r.activity].bySofter[r.nombre]) {
+                byStageWithActivitiesMap[r.etapa].activities[r.activity].bySofter[r.nombre] = { sum: 0, count: 0 };
+              }
+              byStageWithActivitiesMap[r.etapa].activities[r.activity].bySofter[r.nombre].sum += idx;
+              byStageWithActivitiesMap[r.etapa].activities[r.activity].bySofter[r.nombre].count++;
+            }
           }
         }
       }
@@ -204,11 +228,17 @@ export class ReportParserService {
             total: byStageWithActivitiesMap[stage].bySofter[name].count,
           }))
           .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name)),
-        activities: this.sortByAvgDesc(
+        activities: this.sortByAvgDesc<ActivityWithSoftersAggregate>(
           Object.keys(byStageWithActivitiesMap[stage].activities).map(activity => ({
             activity,
             avg: avg(byStageWithActivitiesMap[stage].activities[activity]),
             softerCount: byStageWithActivitiesMap[stage].activities[activity].softers.size,
+            softers: Object.keys(byStageWithActivitiesMap[stage].activities[activity].bySofter)
+              .map(name => ({
+                name,
+                total: byStageWithActivitiesMap[stage].activities[activity].bySofter[name].count,
+              }))
+              .sort((a, b) => b.total - a.total || a.name.localeCompare(b.name)),
           }))
         ),
       }))

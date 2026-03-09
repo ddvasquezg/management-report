@@ -1,5 +1,5 @@
 import { Component, computed, input, signal } from '@angular/core';
-import { StageWithActivitiesAggregate } from '../../../../core/models/aggregates.model';
+import { ActivityWithSoftersAggregate, StageWithActivitiesAggregate } from '../../../../core/models/aggregates.model';
 import { ColorClassPipe } from '../../../../shared/pipes/color-class.pipe';
 
 @Component({
@@ -33,5 +33,9 @@ export class StageActivityTableComponent {
 
   isExpanded(etapa: string): boolean {
     return this.expandedRows().has(etapa);
+  }
+
+  activitiesWithData(activities: ActivityWithSoftersAggregate[]): ActivityWithSoftersAggregate[] {
+    return activities.filter(activity => activity.avg !== null || activity.softerCount > 0 || activity.softers.length > 0);
   }
 }

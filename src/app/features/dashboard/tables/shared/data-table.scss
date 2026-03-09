@@ -94,6 +94,26 @@
   border-top: 1px solid var(--border-table);
 }
 
+.activity-softers {
+  margin-top: 4px;
+}
+
+.activity-groups {
+  display: grid;
+  gap: 8px;
+}
+
+.activity-group {
+  background: var(--bg-stage-chip);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px 10px;
+}
+
+.activity-group .leader-softers-header {
+  margin-bottom: 6px;
+}
+
 .leader-softers-header {
   display: flex;
   align-items: center;

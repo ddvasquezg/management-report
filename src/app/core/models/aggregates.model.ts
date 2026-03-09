@@ -10,6 +10,13 @@ export interface ActivityAggregate {
   softerCount: number;
 }
 
+export interface ActivityWithSoftersAggregate extends ActivityAggregate {
+  softers: {
+    name: string;
+    total: number;
+  }[];
+}
+
 export interface StageWithActivitiesAggregate {
   etapa: string;
   avg: number | null;
@@ -18,7 +25,7 @@ export interface StageWithActivitiesAggregate {
     name: string;
     total: number;
   }[];
-  activities: ActivityAggregate[];
+  activities: ActivityWithSoftersAggregate[];
 }
 
 export interface ObservationAggregate {
