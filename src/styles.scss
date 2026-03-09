@@ -1,0 +1,104 @@
+/* ── PersonalSoft Management Report · Global Styles ── */
+@import url('https://fonts.googleapis.com/css2?family=Reddit+Sans:wght@300;400;500;600;700;800;900&display=swap');
+
+/* ── Dark theme (default) ── */
+:root,
+:root[data-theme="dark"] {
+  --bg-deep:           #07080D;
+  --bg-base:           #090B14;
+  --bg-surface:        #0E1120;
+  --bg-card:           rgba(10, 14, 26, 0.70);
+  --bg-card-accent:    rgba(24, 119, 196, 0.13);
+  --bg-panel:          rgba(8, 11, 22, 0.75);
+  --bg-upload:         rgba(20, 55, 110, 0.18);
+  --bg-upload-hover:   rgba(24, 119, 196, 0.09);
+  --bg-collab-item:    rgba(255, 255, 255, 0.03);
+  --bg-table-hover:    rgba(255, 255, 255, 0.025);
+  --bg-stage-chip:     rgba(255, 255, 255, 0.04);
+  --bg-toggle-active:  rgba(24, 119, 196, 0.55);
+  --topbar-bg:         rgba(5, 6, 11, 0.90);
+  --border:            rgba(24, 119, 196, 0.18);
+  --border-hover:      rgba(24, 119, 196, 0.48);
+  --border-table:      rgba(255, 255, 255, 0.05);
+  --accent:            #1877C4;
+  --accent-bright:     #2B96E0;
+  --accent-tag-bg:     rgba(24, 119, 196, 0.13);
+  --accent-tag-border: rgba(24, 119, 196, 0.28);
+  --text-1:            #EDF2FB;
+  --text-2:            #7B9AB8;
+  --text-3:            #344D65;
+  --success:           #00C97A;
+  --warning:           #F5A52A;
+  --danger:            #E8394A;
+  --chart-grid:        rgba(100, 140, 180, 0.07);
+  --chart-tick:        #7B9AB8;
+  --chart-null:        rgba(20, 65, 130, 0.4);
+  --scrollbar-thumb:       #344D65;
+  --scrollbar-thumb-hover: #7B9AB8;
+  --body-glow-1: rgba(24, 100, 196, 0.32);
+  --body-glow-2: rgba(26, 43, 109, 0.20);
+  --body-from:   #090B14;
+  --body-to:     #06070D;
+}
+
+/* ── Light theme ── */
+:root[data-theme="light"] {
+  --bg-deep:           #F4F7FC;
+  --bg-base:           #ECF0F9;
+  --bg-surface:        #E3E9F5;
+  --bg-card:           rgba(255, 255, 255, 0.92);
+  --bg-card-accent:    rgba(24, 119, 196, 0.06);
+  --bg-panel:          rgba(255, 255, 255, 0.88);
+  --bg-upload:         rgba(24, 119, 196, 0.06);
+  --bg-upload-hover:   rgba(24, 119, 196, 0.10);
+  --bg-collab-item:    rgba(24, 119, 196, 0.04);
+  --bg-table-hover:    rgba(24, 119, 196, 0.04);
+  --bg-stage-chip:     rgba(24, 119, 196, 0.06);
+  --bg-toggle-active:  rgba(24, 119, 196, 0.22);
+  --topbar-bg:         rgba(244, 247, 252, 0.94);
+  --border:            rgba(24, 119, 196, 0.15);
+  --border-hover:      rgba(24, 119, 196, 0.42);
+  --border-table:      rgba(24, 119, 196, 0.08);
+  --accent:            #1877C4;
+  --accent-bright:     #2B96E0;
+  --accent-tag-bg:     rgba(24, 119, 196, 0.10);
+  --accent-tag-border: rgba(24, 119, 196, 0.22);
+  --text-1:            #0C1928;
+  --text-2:            #476282;
+  --text-3:            #8AA0B8;
+  --success:           #00A862;
+  --warning:           #D4880A;
+  --danger:            #C8263A;
+  --chart-grid:        rgba(24, 119, 196, 0.07);
+  --chart-tick:        #476282;
+  --chart-null:        rgba(24, 100, 180, 0.20);
+  --scrollbar-thumb:       #8AA0B8;
+  --scrollbar-thumb-hover: #476282;
+  --body-glow-1: rgba(24, 119, 196, 0.08);
+  --body-glow-2: rgba(26, 43, 109, 0.05);
+  --body-from:   #ECF0F9;
+  --body-to:     #F4F7FC;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Reddit Sans', system-ui, sans-serif;
+  background: var(--bg-deep);
+  color: var(--text-1);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse 70% 55% at -5% 12%, var(--body-glow-1) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 40% at 105% 80%, var(--body-glow-2) 0%, transparent 60%),
+    linear-gradient(160deg, var(--body-from) 0%, var(--body-to) 100%);
+  background-attachment: fixed;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--scrollbar-thumb-hover); }
+

@@ -1,0 +1,50 @@
+<div class="panel">
+  <div class="panel-header">
+    <h3>Detalle por Líder</h3>
+    @if (summary()) {
+      <span class="summary-tag">{{ summary() }}</span>
+    }
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Líder</th>
+        <th>Prom. Índice</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of data(); track item.lider) {
+        <tr class="leader-row">
+          <td>{{ item.lider }}</td>
+          <td class="mono" [class]="pct(item.avg) | colorClass">
+            {{ pct(item.avg) === null ? '—' : (pct(item.avg)!.toFixed(1) + '%') }}
+          </td>
+          <td>
+            <button
+              class="expand-btn"
+              [attr.aria-expanded]="isExpanded(item.lider)"
+              (click)="toggleRow(item.lider)"
+            >{{ isExpanded(item.lider) ? '▼' : '▶' }}</button>
+          </td>
+        </tr>
+        @if (isExpanded(item.lider)) {
+          <tr class="detail-row">
+            <td colspan="3">
+              <div class="detail-inner">
+                @for (stage of item.byStage; track stage.etapa) {
+                  <span class="stage-chip">
+                    <span class="stage-label">{{ stage.etapa.replace('Etapa de ', '') }}</span>
+                    <span class="stage-val mono" [class]="pct(stage.avg) | colorClass">
+                      {{ pct(stage.avg) === null ? '—' : (pct(stage.avg)!.toFixed(1) + '%') }}
+                    </span>
+                  </span>
+                }
+              </div>
+            </td>
+          </tr>
+        }
+      }
+    </tbody>
+  </table>
+</div>

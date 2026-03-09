@@ -1,0 +1,41 @@
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 36px;
+  animation: fadeUp 0.45s ease both;
+}
+
+.kpi-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 24px;
+  display: flex; align-items: center; gap: 18px;
+  backdrop-filter: blur(16px);
+  transition: border-color 0.17s ease, box-shadow 0.17s ease, transform 0.17s ease, background 0.3s ease;
+}
+.kpi-card:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.15), 0 0 0 1px rgba(59,150,255,0.12);
+  transform: translateY(-1px);
+}
+.kpi-card.kpi-accent {
+  border-color: rgba(59, 150, 255, 0.32);
+  background: var(--bg-card-accent);
+}
+
+.kpi-icon   { font-size: 1.35rem; flex-shrink: 0; }
+.kpi-body   { display: flex; flex-direction: column; gap: 2px; }
+.kpi-label  { font-size: 0.68rem; color: var(--text-2); text-transform: uppercase; letter-spacing: 0.07em; }
+.kpi-value  { font-family: 'Reddit Sans', sans-serif; font-weight: 800; font-size: 1.6rem; color: var(--text-1); line-height: 1.1; letter-spacing: -0.02em; transition: color 0.3s ease; }
+.kpi-value.positive { color: var(--success); }
+.kpi-value.neutral  { color: var(--warning); }
+.kpi-value.negative { color: var(--danger); }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) { .kpi-row { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 500px) { .kpi-row { grid-template-columns: 1fr 1fr; } }

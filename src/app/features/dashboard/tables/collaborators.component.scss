@@ -1,0 +1,88 @@
+.panel {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 24px;
+  backdrop-filter: blur(18px);
+  transition: border-color 0.17s ease, box-shadow 0.17s ease, background 0.3s ease;
+}
+.panel:hover {
+  border-color: var(--border-hover);
+  box-shadow: 0 0 0 1px rgba(59,150,255,0.1);
+}
+.panel-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 12px;
+}
+.panel-header h3 {
+  font-family: 'Reddit Sans', sans-serif;
+  font-weight: 700; font-size: 0.88rem;
+  color: var(--text-1); letter-spacing: 0.02em;
+}
+
+/* Search */
+.search-wrap {
+  position: relative;
+  display: flex; align-items: center;
+  margin-bottom: 12px;
+}
+.search-icon {
+  position: absolute; left: 9px;
+  color: var(--text-3); pointer-events: none; flex-shrink: 0;
+}
+.search-input {
+  width: 100%;
+  padding: 6px 28px 6px 28px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--text-1);
+  font-size: 0.8rem; font-family: inherit;
+  outline: none;
+  transition: border-color 0.17s ease, box-shadow 0.17s ease;
+  &::placeholder { color: var(--text-3); }
+  &:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(59,150,255,0.12);
+  }
+}
+.search-clear {
+  position: absolute; right: 8px;
+  background: none; border: none; cursor: pointer;
+  color: var(--text-3); padding: 2px;
+  display: flex; align-items: center;
+  &:hover { color: var(--text-2); }
+}
+
+.collab-list {
+  display: flex; flex-direction: column; gap: 5px;
+  max-height: 340px; overflow-y: auto;
+}
+.collab-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 6px 8px; border-radius: 6px;
+  background: var(--bg-collab-item);
+  animation: fadeUp 0.35s ease both;
+  transition: background 0.3s ease;
+}
+.collab-avatar {
+  width: 28px; height: 28px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-bright) 100%);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Reddit Sans', sans-serif;
+  font-weight: 700; font-size: 0.7rem; color: white;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 2px rgba(24,119,196,0.25);
+}
+.collab-name { font-size: 0.8rem; color: var(--text-1); }
+.no-results { font-size: 0.8rem; color: var(--text-3); padding: 8px; text-align: center; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1100px) {
+  .collab-list { flex-direction: row; flex-wrap: wrap; max-height: none; }
+}

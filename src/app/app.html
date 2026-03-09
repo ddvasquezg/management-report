@@ -1,0 +1,17 @@
+<app-loading-overlay [isLoading]="isLoading()" />
+<app-error-toast [message]="errorMsg()" />
+
+<app-header
+  [filterIa]="filterIa()"
+  (filterChange)="onFilterChange($event)"
+  (exportCsv)="onExportCsv()"
+/>
+
+<main class="app-content">
+  <app-upload
+    [compact]="hasData()"
+    (fileSelected)="onFileSelected($event)"
+    (loadSample)="onLoadSample()"
+  />
+  <app-dashboard />
+</main>

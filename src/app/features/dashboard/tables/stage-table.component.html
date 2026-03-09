@@ -1,0 +1,34 @@
+<div class="panel">
+  <div class="panel-header">
+    <h3>Detalle por Etapa</h3>
+    @if (summary()) {
+      <span class="summary-tag">{{ summary() }}</span>
+    }
+  </div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Etapa</th>
+        <th>Prom. Índice</th>
+        <th>Barra</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of data(); track item.etapa) {
+        <tr>
+          <td>{{ item.etapa }}</td>
+          <td class="mono" [class]="pct(item.avg) | colorClass">
+            {{ pct(item.avg) === null ? '—' : (pct(item.avg)!.toFixed(1) + '%') }}
+          </td>
+          <td>
+            @if (pct(item.avg) !== null) {
+              <div class="bar-track">
+                <div class="bar-fill" [class]="pct(item.avg) | colorClass" [style.width]="barWidth(item.avg)"></div>
+              </div>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>

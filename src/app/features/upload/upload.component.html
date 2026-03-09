@@ -1,0 +1,45 @@
+<section class="upload-section" [class.is-compact]="compact()">
+
+  @if (!compact()) {
+    <div
+      class="upload-zone"
+      [class.drag-over]="isDragOver()"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+    >
+      <div class="upload-icon">
+        <svg width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true">
+          <rect width="44" height="44" rx="12" fill="rgba(59,150,255,0.1)"/>
+          <path d="M22 30V16M16 22l6-6 6 6" stroke="#1877C4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M13 32h18" stroke="#1877C4" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <p class="upload-title">Arrastra tu archivo Excel o CSV aquí</p>
+      <p class="upload-sub">
+        o <label for="file-input" class="upload-link">selecciona un archivo</label>
+      </p>
+    </div>
+    <button class="btn btn-ghost" (click)="onLoadSample()">Cargar datos de ejemplo</button>
+  } @else {
+    <div class="compact-bar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/>
+        <line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      <label for="file-input" class="compact-link">Cargar nuevo archivo</label>
+      <span class="compact-sep">·</span>
+      <button class="compact-ghost" (click)="onLoadSample()">Datos de ejemplo</button>
+    </div>
+  }
+
+  <input
+    type="file"
+    id="file-input"
+    accept=".xlsx,.xls,.csv"
+    class="sr-only"
+    (change)="onFileChange($event)"
+  />
+
+</section>

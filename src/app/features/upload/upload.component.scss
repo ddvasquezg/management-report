@@ -1,0 +1,93 @@
+.upload-section {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+}
+
+/* ── Compact bar (shown when data is loaded) ── */
+.upload-section.is-compact {
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  padding: 8px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  width: fit-content;
+  margin: 0 auto;
+}
+
+.compact-bar {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--text-2);
+  font-size: 0.82rem;
+  svg { flex-shrink: 0; opacity: 0.7; }
+}
+.compact-link {
+  color: var(--accent-bright);
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(59,150,255,0.35);
+  text-underline-offset: 2px;
+  font-size: 0.82rem;
+  &:hover { color: var(--accent); }
+}
+.compact-sep {
+  color: var(--text-3);
+  user-select: none;
+}
+.compact-ghost {
+  background: none; border: none; padding: 0;
+  color: var(--text-2); cursor: pointer;
+  font-size: 0.82rem; font-family: inherit;
+  &:hover { color: var(--text-1); }
+}
+
+.upload-zone {
+  width: 100%; max-width: 520px;
+  border: 1.5px dashed rgba(59, 150, 255, 0.3);
+  border-radius: 16px;
+  padding: 42px 28px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  cursor: default;
+  transition: border-color 0.17s ease, background 0.3s ease, box-shadow 0.17s ease;
+  background: var(--bg-upload);
+}
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--accent);
+  background: var(--bg-upload-hover);
+  box-shadow: 0 0 32px rgba(59, 150, 255, 0.12);
+}
+.upload-icon { margin-bottom: 4px; }
+.upload-title { font-family: 'Reddit Sans', sans-serif; font-weight: 700; font-size: 1rem; color: var(--text-1); }
+.upload-sub   { font-size: 0.84rem; color: var(--text-2); }
+.upload-link  {
+  color: var(--accent); cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(59,150,255,0.4);
+  text-underline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap;
+}
+
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 15px; border-radius: 999px;
+  font-family: 'Reddit Sans', sans-serif;
+  font-size: 0.83rem; font-weight: 500;
+  cursor: pointer;
+  transition: all 0.17s ease;
+  white-space: nowrap; line-height: 1;
+}
+.btn-ghost {
+  background: transparent; color: var(--text-2);
+  border: 1px solid var(--border);
+}
+.btn-ghost:hover {
+  color: var(--accent-bright);
+  border-color: var(--border-hover);
+  background: rgba(59,150,255,0.05);
+}

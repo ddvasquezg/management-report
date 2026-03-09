@@ -1,0 +1,11 @@
+<section class="kpi-row">
+  @for (item of kpiItems; track item.label) {
+    <div class="kpi-card" [class.kpi-accent]="item.accent">
+      <div class="kpi-icon">{{ item.icon }}</div>
+      <div class="kpi-body">
+        <div class="kpi-label">{{ item.label }}</div>
+        <div [class]="item.cssClass">{{ item.display }}</div>
+      </div>
+    </div>
+  }
+</section>

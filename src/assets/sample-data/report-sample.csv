@@ -1,0 +1,25 @@
+Correo,Nombre,Lider En Cliente,Fecha,Etapa,Actividad,Puntos Estimados,Puntos Ejecuados,Uso IA,Unidad de Medida,Indice de Reduccion de Esfuerzo,Observaciones
+odchavez@personalsoft.com,Oscar David Chávez,Edgar Hernán Martínez,17/02/2026,Etapa de Análisis,Análisis y especificación de requisitos,,,No,Días,,
+odchavez@personalsoft.com,Oscar David Chávez,Edgar Hernán Martínez,17/02/2026,Etapa de Desarrollo,Codificación y pruebas unitarias,4,2,Si,Días,0.50,Uso de Copilot para generación de código
+odchavez@personalsoft.com,Oscar David Chávez,Edgar Hernán Martínez,17/02/2026,Etapa de Testing,Automatización de pruebas,2,1.5,No,Días,0.25,
+odchavez@personalsoft.com,Oscar David Chávez,Edgar Hernán Martínez,17/02/2026,Etapa de Soporte,Recepción técnica y funcional,,,No,Días,,
+mjgarcia@personalsoft.com,María José García,Sofía Alejandra Vega,18/02/2026,Etapa de Análisis,Levantamiento de requisitos,3,1.5,Si,Días,0.50,Uso de IA para generación de historias de usuario
+mjgarcia@personalsoft.com,María José García,Sofía Alejandra Vega,18/02/2026,Etapa de Desarrollo,Codificación de módulo de reportes,8,5,Si,Días,0.38,
+mjgarcia@personalsoft.com,María José García,Sofía Alejandra Vega,18/02/2026,Etapa de Testing,Pruebas funcionales,2,1,Si,Días,0.50,
+mjgarcia@personalsoft.com,María José García,Sofía Alejandra Vega,18/02/2026,Etapa de Soporte,Documentación técnica,1,0.5,No,Días,0.50,
+celopez@personalsoft.com,Carlos Enrique López,Edgar Hernán Martínez,19/02/2026,Etapa de Análisis,Definición de arquitectura,2,2,No,Días,0.00,Sin uso de IA en esta etapa
+celopez@personalsoft.com,Carlos Enrique López,Edgar Hernán Martínez,19/02/2026,Etapa de Desarrollo,Integración con API externa,6,3,Si,Días,0.50,
+celopez@personalsoft.com,Carlos Enrique López,Edgar Hernán Martínez,19/02/2026,Etapa de Testing,Pruebas de integración,3,2,No,Días,0.33,
+celopez@personalsoft.com,Carlos Enrique López,Edgar Hernán Martínez,19/02/2026,Etapa de Soporte,Configuración de entornos,2,1.5,No,Días,0.25,
+aptorres@personalsoft.com,Ana Patricia Torres,Roberto Carlos Peña,19/02/2026,Etapa de Análisis,Diseño de flujos de usuario,4,2,Si,Días,0.50,
+aptorres@personalsoft.com,Ana Patricia Torres,Roberto Carlos Peña,19/02/2026,Etapa de Desarrollo,Desarrollo de pantallas frontend,10,6,Si,Días,0.40,
+aptorres@personalsoft.com,Ana Patricia Torres,Roberto Carlos Peña,19/02/2026,Etapa de Testing,Pruebas de usabilidad,3,1.5,Si,Días,0.50,
+aptorres@personalsoft.com,Ana Patricia Torres,Roberto Carlos Peña,19/02/2026,Etapa de Soporte,Soporte a usuarios,,,No,Días,,
+maruiz@personalsoft.com,Miguel Ángel Ruiz,Sofía Alejandra Vega,20/02/2026,Etapa de Análisis,Análisis de datos,,,No,Días,,
+maruiz@personalsoft.com,Miguel Ángel Ruiz,Sofía Alejandra Vega,20/02/2026,Etapa de Desarrollo,Desarrollo de pipelines de datos,5,3,Si,Días,0.40,
+maruiz@personalsoft.com,Miguel Ángel Ruiz,Sofía Alejandra Vega,20/02/2026,Etapa de Testing,Validación de datos,2,2,No,Días,0.00,
+maruiz@personalsoft.com,Miguel Ángel Ruiz,Sofía Alejandra Vega,20/02/2026,Etapa de Soporte,Monitoreo de procesos,1,0.5,Si,Días,0.50,
+lbmendez@personalsoft.com,Laura Beatriz Méndez,Roberto Carlos Peña,20/02/2026,Etapa de Análisis,Documentación de requerimientos,3,1.5,Si,Días,0.50,
+lbmendez@personalsoft.com,Laura Beatriz Méndez,Roberto Carlos Peña,20/02/2026,Etapa de Desarrollo,Backend API REST,7,4,No,Días,0.43,
+lbmendez@personalsoft.com,Laura Beatriz Méndez,Roberto Carlos Peña,20/02/2026,Etapa de Testing,Pruebas de regresión,4,2.5,Si,Días,0.38,
+lbmendez@personalsoft.com,Laura Beatriz Méndez,Roberto Carlos Peña,20/02/2026,Etapa de Soporte,Corrección de bugs,2,1,No,Días,0.50,
