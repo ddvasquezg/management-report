@@ -79,7 +79,15 @@ export class StageChartComponent implements AfterViewInit, OnChanges, OnDestroy 
         maintainAspectRatio: false,
         plugins: {
           legend: { display: false },
-          tooltip: { callbacks: { label: ctx => ` ${(ctx.parsed.y as number).toFixed(1)}%` } },
+          tooltip: {
+            callbacks: {
+              label: ctx => ` ${(ctx.parsed.y as number).toFixed(1)}%`,
+              afterLabel: ctx => {
+                const count = items[ctx.dataIndex]?.softerCount ?? 0;
+                return `Softers considerados: ${count}`;
+              },
+            },
+          },
         },
         scales: {
           x: { grid: { color: gridColor }, ticks: { color: tickColor } },

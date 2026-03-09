@@ -9,6 +9,7 @@
     <thead>
       <tr>
         <th>Etapa</th>
+        <th>Softers</th>
         <th>Prom. Índice</th>
         <th>Barra</th>
       </tr>
@@ -17,6 +18,7 @@
       @for (item of data(); track item.etapa) {
         <tr>
           <td>{{ item.etapa }}</td>
+          <td class="mono">{{ item.softerCount }}</td>
           <td class="mono" [class]="pct(item.avg) | colorClass">
             {{ pct(item.avg) === null ? '—' : (pct(item.avg)!.toFixed(1) + '%') }}
           </td>

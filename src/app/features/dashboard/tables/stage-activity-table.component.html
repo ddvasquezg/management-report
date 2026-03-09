@@ -1,6 +1,6 @@
 <div class="panel">
   <div class="panel-header">
-    <h3>Detalle por Líder</h3>
+    <h3>Detalle de Actividades por Etapa</h3>
     @if (summary()) {
       <span class="summary-tag">{{ summary() }}</span>
     }
@@ -8,16 +8,16 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th>Líder</th>
+        <th>Etapa</th>
         <th>Softers</th>
-        <th>Prom. Índice</th>
+        <th>Prom. Indice</th>
         <th></th>
       </tr>
     </thead>
     <tbody>
-      @for (item of data(); track item.lider) {
+      @for (item of data(); track item.etapa) {
         <tr class="leader-row">
-          <td>{{ item.lider }}</td>
+          <td>{{ item.etapa }}</td>
           <td class="mono">{{ item.softerCount }}</td>
           <td class="mono" [class]="pct(item.avg) | colorClass">
             {{ pct(item.avg) === null ? '—' : (pct(item.avg)!.toFixed(1) + '%') }}
@@ -25,22 +25,25 @@
           <td>
             <button
               class="expand-btn"
-              [attr.aria-expanded]="isExpanded(item.lider)"
-              (click)="toggleRow(item.lider)"
-            >{{ isExpanded(item.lider) ? '▼' : '▶' }}</button>
+              [attr.aria-expanded]="isExpanded(item.etapa)"
+              (click)="toggleRow(item.etapa)"
+            >{{ isExpanded(item.etapa) ? '▼' : '▶' }}</button>
           </td>
         </tr>
-        @if (isExpanded(item.lider)) {
+        @if (isExpanded(item.etapa)) {
           <tr class="detail-row">
             <td colspan="4">
               <div class="detail-inner">
-                @for (stage of item.byStage; track stage.etapa) {
+                @for (activity of item.activities; track activity.activity) {
                   <span class="stage-chip">
-                    <span class="stage-label">{{ stage.etapa.replace('Etapa de ', '') }} ({{ stage.softerCount }})</span>
-                    <span class="stage-val mono" [class]="pct(stage.avg) | colorClass">
-                      {{ pct(stage.avg) === null ? '—' : (pct(stage.avg)!.toFixed(1) + '%') }}
+                    <span class="stage-label">{{ activity.activity }} ({{ activity.softerCount }})</span>
+                    <span class="stage-val mono" [class]="pct(activity.avg) | colorClass">
+                      {{ pct(activity.avg) === null ? '—' : (pct(activity.avg)!.toFixed(1) + '%') }}
                     </span>
                   </span>
+                }
+                @if (!item.activities.length) {
+                  <span class="stage-label">Sin actividades con indice</span>
                 }
               </div>
             </td>

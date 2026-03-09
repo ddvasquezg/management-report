@@ -1,6 +1,7 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, input, inject, computed } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ReportRow } from '../../../core/models/report-row.model';
+import { ReportStoreService } from '../../../core/services/report-store.service';
 
 @Component({
   selector: 'app-collaborators',
@@ -9,6 +10,11 @@ import { ReportRow } from '../../../core/models/report-row.model';
   template: `
     <div class="panel panel-narrow">
       <div class="panel-header"><h3>Softers</h3></div>
+      @if (selectedCount() > 0) {
+        <button class="clear-filter-btn" (click)="clearSelection()">
+          Limpiar ({{ selectedCount() }})
+        </button>
+      }
       <div class="search-wrap">
         <svg class="search-icon" width="13" height="13" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -32,10 +38,16 @@ import { ReportRow } from '../../../core/models/report-row.model';
       </div>
       <div class="collab-list">
         @for (name of filtered(); track name; let i = $index) {
-          <div class="collab-item" [style.animation-delay]="i * 30 + 'ms'">
+          <button
+            type="button"
+            class="collab-item"
+            [class.is-selected]="isSelected(name)"
+            [style.animation-delay]="i * 30 + 'ms'"
+            (click)="toggleSelection(name)"
+          >
             <span class="collab-avatar">{{ name.charAt(0).toUpperCase() }}</span>
             <span class="collab-name">{{ name }}</span>
-          </div>
+          </button>
         }
         @if (filtered().length === 0) {
           <p class="no-results">Sin resultados</p>
@@ -48,6 +60,9 @@ import { ReportRow } from '../../../core/models/report-row.model';
 export class CollaboratorsComponent {
   rows = input<ReportRow[]>([]);
   query = '';
+  private store = inject(ReportStoreService);
+
+  selectedCount = computed(() => this.store.selectedSofters().size);
 
   names(): string[] {
     return [...new Set(this.rows().filter(r => r.nombre).map(r => r.nombre as string))].sort();
@@ -56,5 +71,17 @@ export class CollaboratorsComponent {
   filtered(): string[] {
     const q = this.query.trim().toLowerCase();
     return q ? this.names().filter(n => n.toLowerCase().includes(q)) : this.names();
+  }
+
+  toggleSelection(name: string): void {
+    this.store.toggleSofterSelection(name);
+  }
+
+  clearSelection(): void {
+    this.store.clearSofterSelection();
+  }
+
+  isSelected(name: string): boolean {
+    return this.store.isSofterSelected(name);
   }
 }

@@ -1,12 +1,13 @@
 import { Component, inject, computed } from '@angular/core';
 import { StageChartComponent } from './stage-chart.component';
 import { LeaderChartComponent } from './leader-chart.component';
+import { ActivityChartComponent } from './activity-chart.component';
 import { ReportStoreService } from '../../../core/services/report-store.service';
 
 @Component({
   selector: 'app-charts',
   standalone: true,
-  imports: [StageChartComponent, LeaderChartComponent],
+  imports: [StageChartComponent, LeaderChartComponent, ActivityChartComponent],
   template: `
     <section class="charts-row">
       <app-stage-chart
@@ -16,6 +17,10 @@ import { ReportStoreService } from '../../../core/services/report-store.service'
       <app-leader-chart
         [data]="aggregates().byLeader"
         [summaryText]="leaderSummary()"
+      />
+      <app-activity-chart
+        [data]="aggregates().byActivity"
+        [summaryText]="activitySummary()"
       />
     </section>
   `,
@@ -47,6 +52,12 @@ export class ChartsComponent {
   leaderSummary = computed(() => {
     const avg = this.kpis().avgIndex;
     if (avg === null || !this.aggregates().byLeader.length) return '';
+    return `Prom: ${(avg * 100).toFixed(1)}%`;
+  });
+
+  activitySummary = computed(() => {
+    const avg = this.kpis().avgIndex;
+    if (avg === null || !this.aggregates().byActivity.length) return '';
     return `Prom: ${(avg * 100).toFixed(1)}%`;
   });
 }

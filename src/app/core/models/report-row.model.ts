@@ -6,6 +6,7 @@ export interface ReportRow {
   nombre: string | null;
   lider: string | null;
   etapa: string | null;
+  activity: string | null;
   usoIA: boolean;
   iaAplica: boolean;
   indice: number | null;
