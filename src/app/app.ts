@@ -5,7 +5,6 @@ import { DashboardComponent } from './features/dashboard/dashboard.component';
 import { LoadingOverlayComponent } from './shared/components/loading-overlay/loading-overlay.component';
 import { ErrorToastComponent } from './shared/components/error-toast/error-toast.component';
 import { ReportStoreService } from './core/services/report-store.service';
-import { ExportService } from './core/services/export.service';
 import { FileParserService } from './core/services/file-parser.service';
 
 @Component({
@@ -23,7 +22,6 @@ import { FileParserService } from './core/services/file-parser.service';
 })
 export class App {
   private store      = inject(ReportStoreService);
-  private exporter   = inject(ExportService);
   private fileParser = inject(FileParserService);
 
   isLoading = this.store.isLoading;
@@ -73,14 +71,5 @@ export class App {
 
   onFilterChange(value: boolean): void {
     this.store.setFilterIa(value);
-  }
-
-  onExportCsv(): void {
-    const rows = this.store.rows();
-    if (!rows.length) {
-      this.store.setError('No hay datos para exportar.');
-      return;
-    }
-    this.exporter.exportCsv(rows, this.store.aggregates());
   }
 }

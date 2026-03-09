@@ -10,16 +10,11 @@ import { ThemeService } from '../../core/services/theme.service';
 export class HeaderComponent {
   filterIa     = input<boolean>(false);
   filterChange = output<boolean>();
-  exportCsv    = output<void>();
 
   theme = inject(ThemeService);
 
   onFilterChange(event: Event): void {
     this.filterChange.emit((event.target as HTMLInputElement).checked);
-  }
-
-  onExport(): void {
-    this.exportCsv.emit();
   }
 
   onThemeToggle(): void {

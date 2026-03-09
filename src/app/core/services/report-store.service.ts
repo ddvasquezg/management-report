@@ -22,8 +22,12 @@ export class ReportStoreService {
   readonly errorMsg  = this._errorMsg.asReadonly();
   readonly hasData   = this._hasData.asReadonly();
 
+  readonly baseRows = computed<ReportRow[]>(() =>
+    this.parser.processRows(this._rawRows(), this._filterIa())
+  );
+
   readonly rows = computed<ReportRow[]>(() => {
-    const processed = this.parser.processRows(this._rawRows(), this._filterIa());
+    const processed = this.baseRows();
     const selected = this._selectedSofters();
     if (!selected.size) return processed;
     return processed.filter(row => row.nombre !== null && selected.has(row.nombre));
