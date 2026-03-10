@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { CollaboratorsComponent } from '../collaborators/collaborators.component';
+import { LeadersFilterComponent } from '../leaders-filter/leaders-filter.component';
 import { StageTableComponent } from '../stages/stage-table.component';
 import { LeaderTableComponent } from '../leaders/leader-table.component';
 import { StageActivityTableComponent } from '../stages/stage-activity-table.component';
@@ -11,6 +12,7 @@ import { ReportStoreService } from '../../../../core/services/report-store.servi
   standalone: true,
   imports: [
     CollaboratorsComponent,
+    LeadersFilterComponent,
     StageTableComponent,
     LeaderTableComponent,
     StageActivityTableComponent,
@@ -19,6 +21,7 @@ import { ReportStoreService } from '../../../../core/services/report-store.servi
   template: `
     <section class="tables-row">
       <app-collaborators [rows]="store.baseRows()" />
+      <app-leaders-filter [rows]="store.baseRows()" />
       <app-stage-table   [data]="store.aggregates().byStage"  [globalAvg]="store.kpis().avgIndex" />
       <app-leader-table  [data]="store.aggregates().byLeader" [globalAvg]="store.kpis().avgIndex" />
       <app-stage-activity-table
@@ -37,7 +40,7 @@ import { ReportStoreService } from '../../../../core/services/report-store.servi
   styles: [`
     .tables-row {
       display: grid;
-      grid-template-columns: 210px 1fr 1fr;
+      grid-template-columns: 210px 210px 1fr 1fr;
       gap: 36px;
       animation: fadeUp 0.45s 0.16s ease both;
     }
@@ -53,7 +56,6 @@ import { ReportStoreService } from '../../../../core/services/report-store.servi
     }
     @media (max-width: 1100px) {
       .tables-row { grid-template-columns: 1fr 1fr; row-gap: 36px; }
-      app-collaborators { grid-column: 1 / -1; }
       .activities-block { grid-column: 1 / -1; }
       .observations-block { grid-column: 1 / -1; }
     }

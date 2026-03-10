@@ -11,6 +11,7 @@ export class ReportStoreService {
   private _processImprovements = signal<ProcessImprovementRow[]>([]);
   private _filterIa   = signal<boolean>(false);
   private _selectedSofters = signal<Set<string>>(new Set());
+  private _selectedLeaders = signal<Set<string>>(new Set());
   private _isLoading  = signal<boolean>(false);
   private _errorMsg   = signal<string | null>(null);
   private _hasData    = signal<boolean>(false);
@@ -18,6 +19,7 @@ export class ReportStoreService {
   readonly filterIa  = this._filterIa.asReadonly();
   readonly processImprovements = this._processImprovements.asReadonly();
   readonly selectedSofters = this._selectedSofters.asReadonly();
+  readonly selectedLeaders = this._selectedLeaders.asReadonly();
   readonly isLoading = this._isLoading.asReadonly();
   readonly errorMsg  = this._errorMsg.asReadonly();
   readonly hasData   = this._hasData.asReadonly();
@@ -28,9 +30,16 @@ export class ReportStoreService {
 
   readonly rows = computed<ReportRow[]>(() => {
     const processed = this.baseRows();
-    const selected = this._selectedSofters();
-    if (!selected.size) return processed;
-    return processed.filter(row => row.nombre !== null && selected.has(row.nombre));
+    const selectedSofters = this._selectedSofters();
+    const selectedLeaders = this._selectedLeaders();
+
+    if (!selectedSofters.size && !selectedLeaders.size) return processed;
+
+    return processed.filter(row => {
+      const softerMatch = row.nombre !== null && selectedSofters.has(row.nombre);
+      const leaderMatch = row.lider !== null && selectedLeaders.has(row.lider);
+      return softerMatch || leaderMatch;
+    });
   });
 
   readonly kpis = computed<KpiData>(() =>
@@ -72,6 +81,24 @@ export class ReportStoreService {
 
   isSofterSelected(name: string): boolean {
     return this._selectedSofters().has(name);
+  }
+
+  toggleLeaderSelection(name: string): void {
+    const next = new Set(this._selectedLeaders());
+    if (next.has(name)) {
+      next.delete(name);
+    } else {
+      next.add(name);
+    }
+    this._selectedLeaders.set(next);
+  }
+
+  clearLeaderSelection(): void {
+    this._selectedLeaders.set(new Set());
+  }
+
+  isLeaderSelected(name: string): boolean {
+    return this._selectedLeaders().has(name);
   }
 
   setLoading(value: boolean): void {
