@@ -42,6 +42,13 @@ export class ReportStoreService {
     });
   });
 
+  readonly rowsForSofterFilter = computed<ReportRow[]>(() => {
+    const processed = this.baseRows();
+    const selectedLeaders = this._selectedLeaders();
+    if (!selectedLeaders.size) return processed;
+    return processed.filter(row => row.lider !== null && selectedLeaders.has(row.lider));
+  });
+
   readonly kpis = computed<KpiData>(() =>
     this.parser.computeKpis(this.rows())
   );

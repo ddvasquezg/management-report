@@ -20,7 +20,7 @@ import { ReportStoreService } from '../../../../core/services/report-store.servi
   ],
   template: `
     <section class="tables-row">
-      <app-collaborators [rows]="store.baseRows()" />
+      <app-collaborators [rows]="store.rowsForSofterFilter()" />
       <app-leaders-filter [rows]="store.baseRows()" />
       <app-stage-table   [data]="store.aggregates().byStage"  [globalAvg]="store.kpis().avgIndex" />
       <app-leader-table  [data]="store.aggregates().byLeader" [globalAvg]="store.kpis().avgIndex" />

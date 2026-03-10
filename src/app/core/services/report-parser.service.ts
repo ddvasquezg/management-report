@@ -257,9 +257,9 @@ export class ReportParserService {
   }
 
   computeKpis(rows: ReportRow[]): KpiData {
-    const softers = new Set(rows.filter(r => r.nombre).map(r => r.nombre)).size;
-    const stages  = new Set(rows.filter(r => r.etapa ).map(r => r.etapa )).size;
     const withIdx = rows.filter(r => r.indice !== null);
+    const softers = new Set(withIdx.filter(r => r.nombre).map(r => r.nombre)).size;
+    const stages  = new Set(withIdx.filter(r => r.etapa).map(r => r.etapa)).size;
     const avgIndex = withIdx.length
       ? withIdx.reduce((s, r) => s + r.indice!, 0) / withIdx.length
       : null;
