@@ -15,6 +15,8 @@ export class ReportStoreService {
   private _isLoading  = signal<boolean>(false);
   private _errorMsg   = signal<string | null>(null);
   private _hasData    = signal<boolean>(false);
+  /** Guarda el timeout pendiente para auto-limpiar el error, permitiendo cancelarlo si se registra un nuevo error antes de tiempo. */
+  private _errorTimeout: ReturnType<typeof setTimeout> | null = null;
 
   readonly filterIa  = this._filterIa.asReadonly();
   readonly processImprovements = this._processImprovements.asReadonly();
@@ -28,6 +30,14 @@ export class ReportStoreService {
     this.parser.processRows(this._rawRows(), this._filterIa())
   );
 
+  /**
+   * Filas activas tras aplicar todos los filtros.
+   *
+   * Prioridad de filtros (mutuamente excluyentes — el filtro de Softers tiene precedencia):
+   * 1. Si hay Softers seleccionados, muestra solo sus filas (el filtro de líderes se ignora).
+   * 2. Si hay líderes seleccionados, muestra solo las filas de esos líderes.
+   * 3. Si no hay filtros, retorna todas las filas procesadas.
+   */
   readonly rows = computed<ReportRow[]>(() => {
     const processed = this.baseRows();
     const selectedSofters = this._selectedSofters();
@@ -45,6 +55,11 @@ export class ReportStoreService {
     return processed;
   });
 
+  /**
+   * Filas filtradas solo por la selección activa de líderes, ignorando la selección de Softers.
+   * Usado para calcular la lista de Softers disponibles cuando hay líderes seleccionados,
+   * de modo que el filtro de Softers muestre solo miembros de esos equipos, no todo el dataset.
+   */
   readonly rowsForSofterFilter = computed<ReportRow[]>(() => {
     const processed = this.baseRows();
     const selectedLeaders = this._selectedLeaders();
@@ -160,10 +175,23 @@ export class ReportStoreService {
     this._isLoading.set(value);
   }
 
+  /**
+   * Establece o limpia el mensaje de error activo.
+   * Cuando se establece un mensaje no nulo, se auto-limpia tras 4 segundos.
+   * Cualquier timeout pendiente se cancela antes de registrar un nuevo mensaje,
+   * para evitar que un error anterior borre silenciosamente uno más reciente.
+   */
   setError(msg: string | null): void {
+    if (this._errorTimeout !== null) {
+      clearTimeout(this._errorTimeout);
+      this._errorTimeout = null;
+    }
     this._errorMsg.set(msg);
     if (msg) {
-      setTimeout(() => this._errorMsg.set(null), 4000);
+      this._errorTimeout = setTimeout(() => {
+        this._errorMsg.set(null);
+        this._errorTimeout = null;
+      }, 4000);
     }
   }
 }

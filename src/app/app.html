@@ -12,5 +12,7 @@
     (fileSelected)="onFileSelected($event)"
     (loadSample)="onLoadSample()"
   />
-  <app-dashboard />
+  @defer (when hasData()) {
+    <app-dashboard />
+  }
 </main>

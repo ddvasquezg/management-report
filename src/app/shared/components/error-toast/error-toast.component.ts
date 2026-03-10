@@ -4,7 +4,7 @@ import { Component, input } from '@angular/core';
   selector: 'app-error-toast',
   standalone: true,
   template: `
-    <div class="error-toast" [class.visible]="!!message()" role="alert">
+    <div class="error-toast" [class.visible]="!!message()" role="alert" aria-live="assertive">
       {{ message() }}
     </div>
   `,

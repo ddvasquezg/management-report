@@ -41,7 +41,13 @@ export class App {
       this.store.setRawRows(rows);
       this.store.setProcessImprovements(improvements);
     } catch (e) {
-      this.store.setError('Error al leer el archivo.');
+      const isFormatError = e instanceof Error &&
+        /CFB|ZIP|parse|Invalid/i.test(e.message);
+      this.store.setError(
+        isFormatError
+          ? 'Formato no válido. Use un archivo .xlsx, .xls o .csv.'
+          : `Error al leer "${file.name}". Verifique que el archivo no esté dañado.`
+      );
       console.error(e);
     } finally {
       this.store.setLoading(false);
@@ -62,7 +68,12 @@ export class App {
       this.store.setRawRows(rows);
       this.store.setProcessImprovements(improvements);
     } catch (e) {
-      this.store.setError('No se pudo cargar el archivo de ejemplo.');
+      const isNetwork = e instanceof TypeError;
+      this.store.setError(
+        isNetwork
+          ? 'No se pudo conectar. Verifique su conexión a internet.'
+          : 'No se pudo cargar el archivo de ejemplo.'
+      );
       console.error(e);
     } finally {
       this.store.setLoading(false);

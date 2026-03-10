@@ -11,6 +11,28 @@ import {
   ObservationAggregate,
 } from '../models/aggregates.model';
 
+/**
+ * Fuente única de verdad para todas las variantes de nombres de columnas en CSV/Excel.
+ * Existen múltiples variantes porque:
+ * - Algunos exportadores truncan los encabezados (ejemplo: "Puntos Estimad" en vez de "Puntos Estimados").
+ * - Archivos antiguos usan nombres cortos para columnas de líder ("Lider" vs "Lider En Cliente").
+ * - Hay diferencias de mayúsculas/minúsculas entre formatos ("Nombre" vs "nombre").
+ * - "Ejecuados" es un error tipográfico conocido que se preserva en algunos archivos fuente.
+ */
+const FIELD_KEYS = {
+  nombre:           ['Nombre', 'nombre'],
+  /** Full header in current exports; short header in legacy files. */
+  lider:            ['Lider En Cliente', 'Lider'],
+  etapa:            ['Etapa'],
+  actividad:        ['Actividad', 'actividad'],
+  observaciones:    ['Observaciones', 'observaciones'],
+  usoIa:            ['Uso IA'],
+  /** "Indice de Reduccion" is the truncated variant in some Excel exports. */
+  indice:           ['Indice de Reduccion de Esfuerzo', 'Indice de Reduccion'],
+  puntosEstimados:  ['Puntos Estimados', 'Puntos Estimad'],
+  /** "Ejecuados" is an intentional typo variant; "Ejecutad" is a truncated header. */
+  puntosEjecutados: ['Puntos Ejecuados', 'Puntos Ejecutad', 'Puntos Ejecutado'],
+} as const;
 
 @Injectable({ providedIn: 'root' })
 export class ReportParserService {
@@ -24,6 +46,35 @@ export class ReportParserService {
     });
   }
 
+  /**
+   * Devuelve el primer valor no nulo/no indefinido para las variantes de clave dadas.
+   * Usado para campos numéricos donde `0` es un valor válido y no debe omitirse.
+   */
+  private firstValue(row: RawRow, keys: readonly string[]): unknown {
+    for (const k of keys) {
+      if (row[k] !== undefined && row[k] !== null) return row[k];
+    }
+    return undefined;
+  }
+
+  /**
+   * Devuelve el primer valor "truthy" para las variantes de clave dadas, o `null`.
+   * Usado para campos de texto donde una cadena vacía debe permitir probar la siguiente variante.
+   */
+  private firstTruthy(row: RawRow, keys: readonly string[]): unknown {
+    for (const k of keys) {
+      if (row[k]) return row[k];
+    }
+    return null;
+  }
+
+  /**
+   * Convierte un valor de celda crudo a número, normalizando formatos comunes:
+   * - Elimina signos `%` al final (columnas de porcentaje).
+   * - Reemplaza comas por puntos (separador decimal europeo).
+   * - Elimina espacios en blanco alrededor.
+   * Devuelve `null` para entradas vacías, no numéricas o nulas.
+   */
   private parseNum(v: unknown): number | null {
     if (v === null || v === undefined) return null;
     if (typeof v === 'number') return v;
@@ -33,12 +84,25 @@ export class ReportParserService {
     return isNaN(n) ? null : n;
   }
 
+  /**
+   * Calcula el índice de reducción de esfuerzo para una fila de datos cruda.
+   *
+   * Estrategia de resolución (primer match gana):
+   * 1. **Campo directo**: si alguna columna de `FIELD_KEYS.indice` está presente y es numérica,
+   *    se retorna tal cual (la fuente ya calculó el índice).
+   * 2. **Derivado**: calcula `(puntosEstimados - puntosEjecutados) / puntosEstimados`
+   *    usando las columnas `FIELD_KEYS.puntosEstimados` / `FIELD_KEYS.puntosEjecutados`.
+   *
+   * Devuelve `null` si ningún camino produce un resultado válido, o si los puntos estimados
+   * son cero (protección de división).
+   *
+   * @nota Las claves ya están trimeadas por `normalizeRows` antes de llamar este método.
+   */
   computeIndex(r: RawRow): number | null {
-    const idxField = r['Indice de Reduccion de Esfuerzo'] ?? r['Indice de Reduccion'] ?? r['Indice de Reduccion '];
-    const idxNum = this.parseNum(idxField);
+    const idxNum = this.parseNum(this.firstValue(r, FIELD_KEYS.indice));
     if (idxNum !== null) return idxNum;
-    const est  = this.parseNum(r['Puntos Estimados'] || r['Puntos Estimad'] || r['Puntos Estimad ']);
-    const exec = this.parseNum(r['Puntos Ejecuados'] || r['Puntos Ejecutad'] || r['Puntos Ejecutado']);
+    const est  = this.parseNum(this.firstValue(r, FIELD_KEYS.puntosEstimados));
+    const exec = this.parseNum(this.firstValue(r, FIELD_KEYS.puntosEjecutados));
     if (est === null || est === 0 || exec === null) return null;
     return (est - exec) / est;
   }
@@ -51,17 +115,27 @@ export class ReportParserService {
     });
   }
 
+  /**
+   * Normaliza filas de hoja de cálculo crudas a objetos tipados `ReportRow`.
+   *
+   * La detección de uso de IA utiliza un **match de prefijo** (`startsWith('s')`) para manejar
+   * "Si", "Sí", "si", "SÍ" sin normalización adicional.
+   * `iaAplica` es `true` solo cuando la celda es explícitamente `"si"` o `"no"`,
+   * excluyendo filas donde la columna está vacía o contiene texto libre.
+   *
+   * Todas las búsquedas de campos delegan a `FIELD_KEYS` para manejar nombres de columna multivariantes.
+   */
   processRows(rows: RawRow[], filterIa = false): ReportRow[] {
     const normalized = this.normalizeRows(rows);
     const processed: ReportRow[] = normalized.map(r => {
-      const iaRaw = (r['Uso IA'] ?? '').toString().trim().toLowerCase();
+      const iaRaw = (this.firstValue(r, FIELD_KEYS.usoIa) ?? '').toString().trim().toLowerCase();
       const iaAplica = iaRaw === 'si' || iaRaw === 'no';
       return {
-        nombre: (r['Nombre'] || r['nombre'] || null) as string | null,
-        lider:  (r['Lider En Cliente'] || r['Lider'] || null) as string | null,
-        etapa:  (r['Etapa'] || null) as string | null,
-        activity: (r['Actividad'] || r['actividad'] || null) as string | null,
-        observation: (r['Observaciones'] || r['observaciones'] || null) as string | null,
+        nombre:      this.firstTruthy(r, FIELD_KEYS.nombre)        as string | null,
+        lider:       this.firstTruthy(r, FIELD_KEYS.lider)         as string | null,
+        etapa:       this.firstTruthy(r, FIELD_KEYS.etapa)         as string | null,
+        activity:    this.firstTruthy(r, FIELD_KEYS.actividad)     as string | null,
+        observation: this.firstTruthy(r, FIELD_KEYS.observaciones) as string | null,
         usoIA:  iaRaw.startsWith('s'),
         iaAplica,
         indice: this.computeIndex(r),
@@ -70,6 +144,24 @@ export class ReportParserService {
     return filterIa ? processed.filter(x => x.usoIA) : processed;
   }
 
+  /**
+   * Calcula todos los agregados multidimensionales sobre las filas procesadas **en una sola pasada**.
+   *
+   * Cinco mapas acumuladores independientes se construyen simultáneamente:
+   * - `byStageMap`: índice promedio + conteo de softers distintos por etapa.
+   * - `byActivityMap`: índice promedio + conteo de softers distintos por actividad.
+   * - `byLeaderMap`: promedio por líder con desglose anidado por softer y por etapa.
+   * - `byStageWithActivitiesMap`: agregado por etapa con desglose anidado por actividad y
+   *   por softer (respaldando las tablas de drill-down detalladas de etapa/actividad).
+   * - `byObservationMap`: agrupa observaciones idénticas por softer, usando la clave
+   *   `"{softer}__{observation}"` para evitar colisiones entre softers.
+   *
+   * **Las filas con índice `null` se excluyen completamente** de todos los acumuladores, incluyendo
+   * los conjuntos de conteo de softers — solo las filas con índice computable contribuyen a cualquier métrica.
+   *
+   * Todos los arrays de resultados se ordenan de forma descendente por índice promedio usando `sortByAvgDesc`,
+   * con entradas de promedio `null` al final.
+   */
   computeAggregates(rows: ReportRow[]): ReportAggregates {
     const byStageMap: Record<string, { sum: number; count: number; softers: Set<string> }> = {};
     const byLeaderMap: Record<string, { sum: number; count: number; softers: Set<string>; bySofter: Record<string, { sum: number; count: number }>; byStage: Record<string, { sum: number; count: number; softers: Set<string> }> }> = {};
