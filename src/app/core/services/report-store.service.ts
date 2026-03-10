@@ -33,13 +33,16 @@ export class ReportStoreService {
     const selectedSofters = this._selectedSofters();
     const selectedLeaders = this._selectedLeaders();
 
-    if (!selectedSofters.size && !selectedLeaders.size) return processed;
-
-    return processed.filter(row => {
-      const softerMatch = row.nombre !== null && selectedSofters.has(row.nombre);
-      const leaderMatch = row.lider !== null && selectedLeaders.has(row.lider);
-      return softerMatch || leaderMatch;
-    });
+    if (selectedSofters.size > 0) {
+      // Filtrar solo por Softers seleccionados
+      return processed.filter(row => row.nombre !== null && selectedSofters.has(row.nombre));
+    }
+    if (selectedLeaders.size > 0) {
+      // Filtrar solo por líderes seleccionados
+      return processed.filter(row => row.lider !== null && selectedLeaders.has(row.lider));
+    }
+    // Sin filtros, mostrar todo
+    return processed;
   });
 
   readonly rowsForSofterFilter = computed<ReportRow[]>(() => {
@@ -56,6 +59,51 @@ export class ReportStoreService {
   readonly aggregates = computed<ReportAggregates>(() =>
     this.parser.computeAggregates(this.rows())
   );
+
+  // Devuelve los líderes asociados a los Softers seleccionados
+  readonly leadersForSelectedSofters = computed<string[]>(() => {
+    const processed = this.baseRows();
+    const selectedSofters = this._selectedSofters();
+    if (!selectedSofters.size) return [];
+    // Filtrar filas por Softers seleccionados y extraer líderes únicos
+    const leaders = processed
+      .filter(row => row.nombre !== null && selectedSofters.has(row.nombre) && row.lider)
+      .map(row => row.lider as string);
+    return [...new Set(leaders)].sort();
+  });
+
+  // Devuelve todos los líderes o solo los de los Softers seleccionados
+  readonly leadersForFilter = computed<string[]>(() => {
+    const processed = this.baseRows();
+    const selectedSofters = this._selectedSofters();
+    if (!selectedSofters.size) {
+      // Todos los líderes
+      return [...new Set(processed.filter(row => row.lider).map(row => row.lider as string))].sort();
+    }
+    // Solo líderes de Softers seleccionados
+    const leaders = processed
+      .filter(row => row.nombre !== null && selectedSofters.has(row.nombre) && row.lider)
+      .map(row => row.lider as string);
+    return [...new Set(leaders)].sort();
+  });
+
+  // Devuelve todos los Softers o solo los de los líderes seleccionados
+  readonly softersForFilter = computed<string[]>(() => {
+    const processed = this.baseRows();
+    const selectedLeaders = this._selectedLeaders();
+    if (!selectedLeaders.size) {
+      // Todos los Softers
+      return [...new Set(processed.filter(row => row.nombre).map(row => row.nombre as string))].sort();
+    }
+    // Solo Softers de líderes seleccionados
+    const softers = processed
+      .filter(row => row.lider !== null && selectedLeaders.has(row.lider) && row.nombre)
+      .map(row => row.nombre as string);
+    return [...new Set(softers)].sort();
+  });
+
+  // Indica si el filtro de líderes debe estar bloqueado
+  readonly isLeadersFilterBlocked = computed(() => this._selectedSofters().size > 0);
 
   constructor(private parser: ReportParserService) {}
 

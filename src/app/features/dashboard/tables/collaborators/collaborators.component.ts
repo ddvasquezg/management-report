@@ -58,14 +58,14 @@ import { ReportStoreService } from '../../../../core/services/report-store.servi
   styleUrl: './collaborators.component.scss',
 })
 export class CollaboratorsComponent {
-  rows = input<ReportRow[]>([]);
+  softers = input<string[]>([]);
   query = '';
   private store = inject(ReportStoreService);
 
   selectedCount = computed(() => this.store.selectedSofters().size);
 
   names(): string[] {
-    return [...new Set(this.rows().filter(r => r.nombre).map(r => r.nombre as string))].sort();
+    return this.softers();
   }
 
   filtered(): string[] {

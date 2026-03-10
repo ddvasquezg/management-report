@@ -58,14 +58,15 @@ import { ReportStoreService } from '../../../../core/services/report-store.servi
   styleUrl: '../collaborators/collaborators.component.scss',
 })
 export class LeadersFilterComponent {
-  rows = input<ReportRow[]>([]);
+  leaders = input<string[]>([]);
+  blocked = input<boolean>(false);
   query = '';
   private store = inject(ReportStoreService);
 
   selectedCount = computed(() => this.store.selectedLeaders().size);
 
   names(): string[] {
-    return [...new Set(this.rows().filter(r => r.lider).map(r => r.lider as string))].sort();
+    return this.leaders();
   }
 
   filtered(): string[] {
@@ -74,11 +75,15 @@ export class LeadersFilterComponent {
   }
 
   toggleSelection(name: string): void {
-    this.store.toggleLeaderSelection(name);
+    if (!this.blocked()) {
+      this.store.toggleLeaderSelection(name);
+    }
   }
 
   clearSelection(): void {
-    this.store.clearLeaderSelection();
+    if (!this.blocked()) {
+      this.store.clearLeaderSelection();
+    }
   }
 
   isSelected(name: string): boolean {
